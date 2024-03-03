@@ -24,8 +24,7 @@ namespace BookStoreAPI.Controllers
         [HttpPost("Register")]
         public async Task<IActionResult> Register([FromBody] RegisterDTO model)
         {
-            //AppUser user = new AppUser();
-            //user = Mapper.Map<AppUser>(model);
+            
             var result = await _repository.RegisterAsync(model);
             if (result.Succeeded)
             {
@@ -54,6 +53,45 @@ namespace BookStoreAPI.Controllers
                 Token = result,
                 Message = "Login successful."
             });
+        }
+
+        [HttpGet("AllUsers")]
+        public async Task<IActionResult> GetAllUsers()
+        {
+            try
+            {
+                return Ok(await _repository.GetAllUsers());
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+        [HttpGet("User")]
+        public async Task<IActionResult> GetUserById(string id)
+        {
+            try
+            {
+                return Ok(await _repository.GetUserById(id));
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+        [HttpGet("Username")]
+        public async Task<IActionResult> GetUsersByUserName(string name)
+        {
+            try
+            {
+                return Ok(await _repository.GetUsersByUserName(name));
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
         }
     }
 }

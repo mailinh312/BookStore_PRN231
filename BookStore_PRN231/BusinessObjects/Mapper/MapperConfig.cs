@@ -17,12 +17,30 @@ namespace BusinessObjects.Mapper
                 .ForMember(dest => dest.AuthorName, opt => opt.MapFrom(src => src.Author != null ? src.Author.AuthorName : null))
                 .ForMember(dest => dest.CategoryName, opt => opt.MapFrom(src => src.Category != null ? src.Category.CategoryName : null))
                 .ReverseMap();
-            CreateMap<RegisterDTO, AppUser>().ReverseMap();
+
+            CreateMap<Book, BookCreateDto>().ReverseMap();
+
+            CreateMap<AppUser, UserDto>().ReverseMap();
+
             CreateMap<Category, CategoryDto>().ReverseMap();
+
+            CreateMap<Category, CategoryCreateDto>().ReverseMap();
+
             CreateMap<Author, AuthorDto>().ReverseMap();
+
+            CreateMap<Author, AuthorCreateDto>().ReverseMap();
+
             CreateMap<Order, OrderDto>()
                 .ForMember(dest => dest.Username, opt => opt.MapFrom(src => src.User != null ? src.User.UserName : null))
                 .ForMember(dest => dest.StatusName, opt => opt.MapFrom(src => src.Status != null ? src.Status.StatusName : null))
+                .ReverseMap();
+
+            CreateMap<Order, OrderCreateDto>().ReverseMap();
+
+            CreateMap<OrderDetail, OrderDetailCreateDto>().ReverseMap();
+
+            CreateMap<OrderDetail, OrderDetailDto>()
+                .ForMember(dest => dest.BookTitle, opt => opt.MapFrom(src => src.Book != null ? src.Book.Title : null))
                 .ReverseMap();
         }
     }

@@ -13,7 +13,7 @@ namespace Repository.IRepositories
         List<AuthorDto> GetAllAuthors();
         List<AuthorDto> GetAuthorsWithActiveIsTrue();
         AuthorDto GetAuthorById(int id);
-        void AddNewAuthor(AuthorDto author);
+        void AddNewAuthor(AuthorCreateDto author);
         void UpdateAuthor(AuthorDto author);
 
     }

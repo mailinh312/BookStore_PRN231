@@ -19,7 +19,7 @@ namespace Repository.Repositories
             _context = context;
             _mapper = mapper;
         }
-        public void AddNewAuthor(AuthorDto authorDto)
+        public void AddNewAuthor(AuthorCreateDto authorDto)
         {
             try
             {
@@ -28,7 +28,6 @@ namespace Repository.Repositories
                     throw new Exception("Author existed!");
                 }
                 Author author = _mapper.Map<Author>(authorDto);
-                author.AuthorId = 0;
                 author.Active = true;
                 _context.Authors.Add(author);
                 _context.SaveChanges();

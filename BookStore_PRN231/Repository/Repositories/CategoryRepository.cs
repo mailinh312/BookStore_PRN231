@@ -21,7 +21,7 @@ namespace Repository.Repositories
             _context = context;
             _mapper = mapper;
         }
-        public void AddNewCategory(CategoryDto categoryDto)
+        public void AddNewCategory(CategoryCreateDto categoryDto)
         {
             try
             {
@@ -31,9 +31,7 @@ namespace Repository.Repositories
                     throw new Exception("Category existed!");
                 }
                 category = _mapper.Map<Category>(categoryDto);
-                category.CategoryId = 0;
                 category.Active = true;
-                category.Books = null;
                 _context.Categories.Add(category);
                 _context.SaveChanges();
             }

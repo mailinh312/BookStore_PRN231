@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using BusinessObjects.DTO;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Repository.IRepositories;
 
@@ -23,7 +24,7 @@ namespace BookStoreAPI.Controllers
             }
             catch (Exception ex)
             {
-                return NotFound();
+                return NotFound(ex.Message);
             }
         }
 
@@ -49,7 +50,20 @@ namespace BookStoreAPI.Controllers
             }
             catch (Exception ex)
             {
-                return NotFound();
+                return NotFound(ex.Message);
+            }
+        }
+
+        [HttpPost("Create")]
+        public IActionResult AddNewOrder(OrderCreateDto order)
+        {
+            try
+            {
+                return Ok(_orderRepository.AddNewOrder(order));
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
             }
         }
 
@@ -63,7 +77,7 @@ namespace BookStoreAPI.Controllers
             }
             catch (Exception ex)
             {
-                return NotFound();
+                return NotFound(ex.Message);
             }
         }
     }

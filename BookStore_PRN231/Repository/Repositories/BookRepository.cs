@@ -21,7 +21,7 @@ namespace Repository.Repositories
             _mapper = mapper;
         }
 
-        public void AddNewBook(BookDto bookDto)
+        public void AddNewBook(BookCreateDto bookDto)
         {
             try
             {
@@ -37,7 +37,7 @@ namespace Repository.Repositories
                 }
 
                 book = _mapper.Map<Book>(bookDto);
-                book.BookId = 0;
+                book.Active = true;
                 book.Author = _context.Authors.FirstOrDefault(x => x.AuthorId == book.AuthorId);
                 book.Category = _context.Categories.FirstOrDefault(x => x.CategoryId == book.CategoryId);
 

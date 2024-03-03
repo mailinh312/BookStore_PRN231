@@ -16,7 +16,7 @@ namespace Repository.IRepositories
         List<BookDto> GetBooksByCategory(int id);
         List<BookDto> GetBooksByAuthor(int id);
 
-        void AddNewBook(BookDto bookDto);
+        void AddNewBook(BookCreateDto bookDto);
         void UpdateBook(BookDto bookDto);
     }
 }

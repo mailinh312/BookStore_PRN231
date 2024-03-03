@@ -26,7 +26,7 @@ namespace BookStoreAPI.Controllers
             }
             catch (Exception ex)
             {
-                return NotFound();
+                return NotFound(ex.Message);
             }
         }
 
@@ -39,7 +39,7 @@ namespace BookStoreAPI.Controllers
             }
             catch (Exception ex)
             {
-                return NotFound();
+                return NotFound(ex.Message);
             }
         }
 
@@ -52,12 +52,12 @@ namespace BookStoreAPI.Controllers
             }
             catch (Exception ex)
             {
-                return NotFound();
+                return NotFound(ex.Message);
             }
         }
 
         [HttpPost("Create")]
-        public IActionResult AddNewAuthor(AuthorDto author)
+        public IActionResult AddNewAuthor(AuthorCreateDto author)
         {
             try
             {
@@ -66,7 +66,7 @@ namespace BookStoreAPI.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest();
+                return BadRequest(ex.Message);
             }
         }
 
@@ -80,7 +80,7 @@ namespace BookStoreAPI.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest();
+                return BadRequest(ex.Message);
             }
         }
     }

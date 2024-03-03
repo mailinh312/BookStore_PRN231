@@ -1,4 +1,5 @@
-﻿using BusinessObjects.DTO;
+﻿using AutoMapper;
+using BusinessObjects.DTO;
 using BusinessObjects.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.Extensions.Configuration;
@@ -20,17 +21,83 @@ namespace Repository.Repositories
         private readonly SignInManager<AppUser> _signInManager;
         private readonly RoleManager<IdentityRole> _roleManager;
         private readonly IConfiguration _configuration;
+        private readonly IMapper _mapper;
 
         public AppUserRepository(UserManager<AppUser> userManager,
             SignInManager<AppUser> signInManager,
             IConfiguration configuration,
-            RoleManager<IdentityRole> roleManager)
+            RoleManager<IdentityRole> roleManager,
+            IMapper mapper)
         {
             _userManager = userManager;
             _roleManager = roleManager;
             _signInManager = signInManager;
             _configuration = configuration;
+            _mapper = mapper;
         }
+
+        public async Task<List<UserDto>> GetAllUsers()
+        {
+            try
+            {
+                List<AppUser> users = _userManager.Users.ToList();
+
+                var usersDto = _mapper.Map<List<UserDto>>(users);
+                foreach (var userDto in usersDto)
+                {
+                    AppUser user = _userManager.Users.FirstOrDefault(x => x.Id.Equals(userDto.Id));
+                    userDto.Roles = (await _userManager.GetRolesAsync(user)) as List<string>;
+                }
+                return usersDto;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<UserDto> GetUserById(string id)
+        {
+            try
+            {
+                AppUser user = _userManager.Users.FirstOrDefault(x => x.Id.Equals(id));
+                if (user == null)
+                {
+                    throw new Exception("Not found user!");
+                }
+                var userDto = _mapper.Map<UserDto>(user);
+                userDto.Roles = (await _userManager.GetRolesAsync(user)) as List<string>;
+                return userDto;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<List<UserDto>> GetUsersByUserName(string name)
+        {
+            try
+            {
+                List<AppUser> users = _userManager.Users.Where(x => x.UserName.ToUpper().Contains(name.ToUpper())).ToList();
+                if (users.Count <= 0)
+                {
+                    throw new Exception("Not found any user!");
+                }
+                var usersDto = _mapper.Map<List<UserDto>>(users);
+                foreach (var userDto in usersDto)
+                {
+                    AppUser user = _userManager.Users.FirstOrDefault(x => x.Id.Equals(userDto.Id));
+                    userDto.Roles = (await _userManager.GetRolesAsync(user)) as List<string>;
+                }
+                return usersDto;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
         public async Task<string> LoginAsync(LoginDTO model)
         {
             var user = await _userManager.FindByNameAsync(model.UserName);

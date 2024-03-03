@@ -15,7 +15,7 @@ namespace Repository.IRepositories
         List<CategoryDto> GetCategoriesWithActiveIsTrue();
 
         CategoryDto GetCategoryById(int id);
-        void AddNewCategory(CategoryDto categoryDto);
+        void AddNewCategory(CategoryCreateDto categoryDto);
         void UpdateCategory(CategoryDto categoryDto);
 
     }

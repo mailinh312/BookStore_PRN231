@@ -89,7 +89,7 @@ namespace BookStoreAPI.Controllers
         }
 
         [HttpPost("Create")]
-        public IActionResult AddNewBook(BookDto book)
+        public IActionResult AddNewBook(BookCreateDto book)
         {
             try
             {

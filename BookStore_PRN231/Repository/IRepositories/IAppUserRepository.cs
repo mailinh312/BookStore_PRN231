@@ -13,5 +13,11 @@ namespace Repository.IRepositories
     {
         Task<IdentityResult> RegisterAsync(RegisterDTO model);
         Task<string> LoginAsync(LoginDTO model);
+
+        Task<List<UserDto>> GetAllUsers();
+
+        Task<List<UserDto>> GetUsersByUserName(string name);
+
+        Task<UserDto> GetUserById(string id);
     }
 }

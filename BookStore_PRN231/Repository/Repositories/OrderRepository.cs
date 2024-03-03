@@ -14,12 +14,21 @@ namespace Repository.Repositories
     public class OrderRepository : IOrderRepository
     {
         private readonly BookStoreDbContext _context;
-        private IMapper _mapper;
+        private readonly IMapper _mapper;
 
         public OrderRepository(BookStoreDbContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
+        }
+
+        public Order AddNewOrder(OrderCreateDto orderDto)
+        {
+            Order order = _mapper.Map<Order>(orderDto);
+            order.OrderDate = DateTime.Now;
+            _context.Orders.Add(order);
+            _context.SaveChanges();
+            return order;
         }
 
         public List<OrderDto> GetAllOrders()
