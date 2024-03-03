@@ -40,19 +40,6 @@ namespace BookStoreAPI.Controllers
             }
         }
 
-        [HttpGet("Detail")]
-        public IActionResult GetDetailOrderById(int id)
-        {
-            try
-            {
-                return Ok(_orderRepository.GetDetailOrderById(id));
-            }
-            catch (Exception ex)
-            {
-                return NotFound();
-            }
-        }
-
         [HttpGet("UserId")]
         public IActionResult GetOrderByUserId(string id)
         {

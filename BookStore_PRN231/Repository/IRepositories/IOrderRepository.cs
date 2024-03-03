@@ -12,7 +12,6 @@ namespace Repository.IRepositories
     {
         List<OrderDto> GetAllOrders();
         OrderDto GetOrderById(int id);
-        Order GetDetailOrderById(int id);
 
         List<OrderDto> GetOrdersByUserId(string userId);
 

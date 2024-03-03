@@ -41,24 +41,6 @@ namespace Repository.Repositories
             }
         }
 
-        public Order GetDetailOrderById(int id)
-        {
-            try
-            {
-                var order = _context.Orders.Include(x => x.User).Include(x => x.Status).FirstOrDefault(x => x.OrderId == id);
-                if (order == null)
-                {
-                    throw new Exception("Not found order!");
-                }
-
-                return order;
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-
         public OrderDto GetOrderById(int id)
         {
             try
