@@ -25,8 +25,6 @@ namespace BusinessObjects.Models
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<OrderDetail>().HasKey(m => new { m.OrderId, m.BookId });
-            modelBuilder.Entity<ImportDetail>().HasKey(m => new { m.ImportId, m.BookId });
 
             foreach (var entityType in modelBuilder.Model.GetEntityTypes())
             {

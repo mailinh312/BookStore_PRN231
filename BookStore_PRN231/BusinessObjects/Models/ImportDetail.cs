@@ -9,7 +9,8 @@ namespace BusinessObjects.Models
 {
     public class ImportDetail
     {
-        
+        [Key]
+        public int ImportDetailId { get; set; }
 
         [Display(Name = "Mã phiếu nhập")]
         public int? ImportId { get; set; }

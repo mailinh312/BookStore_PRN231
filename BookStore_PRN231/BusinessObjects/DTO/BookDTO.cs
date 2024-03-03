@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace BusinessObjects.DTO
 {
-    public class BookDTO
+    public class BookDto
     {
         public int BookId { get; set; }
 
@@ -26,16 +26,15 @@ namespace BusinessObjects.DTO
         public int? AuthorId { get; set; }
 
         public string? AuthorName { get; set; }
+        public string? Description { get; set; }
 
         public string? Publisher { get; set; }
 
         public DateTime? PublishDate { get; set; }
         public int? StockQuantity { get; set; }
 
-        [Display(Name = "Link ảnh")]
         public string? ImageUrl { get; set; }
 
-        [Display(Name = "Hoạt động")]
         public bool Active { get; set; }
     }
 }

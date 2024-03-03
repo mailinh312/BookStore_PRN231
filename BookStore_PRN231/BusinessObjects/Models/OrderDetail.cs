@@ -10,6 +10,8 @@ namespace BusinessObjects.Models
 {
     public class OrderDetail
     {
+        [Key]
+        public int OrderDetailId { get; set; }
 
         [Required]
         [Display(Name = "Mã đơn hàng")]

@@ -18,7 +18,9 @@ namespace BusinessObjects.Models
         [Key]
         [Display(Name = "Mã đơn hàng")]
         public int OrderId { get; set; }
-        public String? UserId { get; set; }
+
+        [ForeignKey(nameof(User))]
+        public string? UserId { get; set; }
 
         [Display(Name = "Ngày đặt hàng")]
         public DateTime OrderDate { get; set; }
