@@ -44,7 +44,7 @@ namespace Repository.Repositories
             try
             {
                 List<Author> authors = _context.Authors.ToList();
-                if (authors.Count <= 0)
+                if (!authors.Any())
                 {
                     throw new Exception("List is empty!");
                 }
@@ -80,7 +80,7 @@ namespace Repository.Repositories
             try
             {
                 List<Author> authors = _context.Authors.Where(x => x.Active == true).ToList();
-                if (authors.Count <= 0)
+                if (!authors.Any())
                 {
                     throw new Exception("List is empty!");
                 }

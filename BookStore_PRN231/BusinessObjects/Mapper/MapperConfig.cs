@@ -42,6 +42,16 @@ namespace BusinessObjects.Mapper
             CreateMap<OrderDetail, OrderDetailDto>()
                 .ForMember(dest => dest.BookTitle, opt => opt.MapFrom(src => src.Book != null ? src.Book.Title : null))
                 .ReverseMap();
+
+            CreateMap<Import, ImportDto>()
+                .ForMember(dest => dest.UserName, opt => opt.MapFrom(src => src.User != null ? src.User.UserName : null))
+                .ReverseMap();
+
+            CreateMap<Import, ImportCreateDto>().ReverseMap();
+            CreateMap<ImportDetail, ImportDetailCreateDto>().ReverseMap();
+            CreateMap<ImportDetail, ImportDetailDto>()
+               .ForMember(dest => dest.BookTitle, opt => opt.MapFrom(src => src.Book != null ? src.Book.Title : null))
+               .ReverseMap();
         }
     }
 }

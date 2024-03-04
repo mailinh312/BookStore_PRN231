@@ -46,7 +46,7 @@ namespace BookStoreAPI.Controllers
             try
             {
                 _orderDetailRepository.AddNewOrderDetail(orderDetailCreateDto);
-                return Ok(orderDetailCreateDto);
+                return Ok();
             }catch (Exception ex)
             {
                 return BadRequest(ex.Message);

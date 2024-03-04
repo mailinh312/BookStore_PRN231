@@ -74,6 +74,9 @@ namespace BookStoreAPI
             builder.Services.AddScoped<IAuthorRepository, AuthorRepository>();
             builder.Services.AddScoped<IOrderRepository, OrderRepository>();
             builder.Services.AddScoped<IOrderDetailRepository, OrderDetailRepository>();
+            builder.Services.AddScoped<IImportRepository, ImportRepository>();
+            builder.Services.AddScoped<IImportDetailRepository, ImportDetailRepository>();
+
 
 
             builder.Services.Configure<IdentityOptions>(options =>

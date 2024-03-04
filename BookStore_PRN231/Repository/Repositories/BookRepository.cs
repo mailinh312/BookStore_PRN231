@@ -29,7 +29,7 @@ namespace Repository.Repositories
                 {
                     throw new Exception("Book must be not null!");
                 }
-                
+
                 Book book = _context.Books.FirstOrDefault(x => x.Title.Equals(bookDto.Title));
                 if (book != null)
                 {
@@ -57,7 +57,7 @@ namespace Repository.Repositories
             {
                 List<Book> books = _context.Books.Include(x => x.Author).Include(x => x.Category).ToList();
 
-                if (books.Count <= 0)
+                if (!books.Any())
                 {
                     throw new Exception("List book is empty!");
                 }
@@ -76,7 +76,7 @@ namespace Repository.Repositories
             try
             {
                 List<Book> books = _context.Books.Where(x => x.AuthorId == id).Include(x => x.Author).Include(x => x.Category).ToList();
-                if (books.Count <= 0)
+                if (!books.Any())
                 {
                     throw new Exception("List book is empty!");
                 }
@@ -95,7 +95,7 @@ namespace Repository.Repositories
             try
             {
                 List<Book> books = _context.Books.Where(x => x.CategoryId == id).Include(x => x.Author).Include(x => x.Category).ToList();
-                if (books.Count <= 0)
+                if (!books.Any())
                 {
                     throw new Exception("List book is empty!");
                 }
@@ -113,7 +113,7 @@ namespace Repository.Repositories
             try
             {
                 List<Book> books = _context.Books.Where(x => x.Title.ToUpper().Contains(title.ToUpper())).Include(x => x.Author).Include(x => x.Category).ToList();
-                if (books.Count <= 0)
+                if (!books.Any())
                 {
                     throw new Exception("There is no book found!");
                 }
@@ -153,7 +153,7 @@ namespace Repository.Repositories
                 {
                     throw new Exception("Book does not exist!");
                 }
-                
+
                 Book book = _context.Books.FirstOrDefault(b => b.BookId == bookDto.BookId);
                 _mapper.Map(bookDto, book);
                 book.Author = _context.Authors.FirstOrDefault(x => x.AuthorId == bookDto.AuthorId);

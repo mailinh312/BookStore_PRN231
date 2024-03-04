@@ -22,13 +22,13 @@ namespace Repository.Repositories
             _mapper = mapper;
         }
 
-        public Order AddNewOrder(OrderCreateDto orderDto)
+        public int AddNewOrder(OrderCreateDto orderDto)
         {
             Order order = _mapper.Map<Order>(orderDto);
             order.OrderDate = DateTime.Now;
             _context.Orders.Add(order);
             _context.SaveChanges();
-            return order;
+            return order.OrderId;
         }
 
         public List<OrderDto> GetAllOrders()
@@ -36,7 +36,7 @@ namespace Repository.Repositories
             try
             {
                 var orders = _context.Orders.Include(x => x.User).Include(x => x.Status).ToList();
-                if (orders.Count() <= 0)
+                if (!orders.Any())
                 {
                     throw new Exception("List is empty!");
                 }
@@ -73,7 +73,7 @@ namespace Repository.Repositories
             try
             {
                 var orders = _context.Orders.Where(x => x.UserId == userId).Include(x => x.User).Include(x => x.Status).ToList();
-                if (orders.Count() <= 0)
+                if (!orders.Any())
                 {
                     throw new Exception("List is empty!");
                 }

@@ -80,7 +80,7 @@ namespace Repository.Repositories
             try
             {
                 List<AppUser> users = _userManager.Users.Where(x => x.UserName.ToUpper().Contains(name.ToUpper())).ToList();
-                if (users.Count <= 0)
+                if (!users.Any())
                 {
                     throw new Exception("Not found any user!");
                 }

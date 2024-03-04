@@ -46,7 +46,7 @@ namespace Repository.Repositories
             try
             {
                 List<Category> categories = _context.Categories.ToList();
-                if (categories.Count <= 0)
+                if (!categories.Any())
                 {
                     throw new Exception("List is empty!");
                 }
@@ -64,7 +64,7 @@ namespace Repository.Repositories
             try
             {
                 List<Category> categories = _context.Categories.Where(x => x.Active == true).ToList();
-                if (categories.Count <= 0)
+                if (!categories.Any())
                 {
                     throw new Exception("List is empty!");
                 }

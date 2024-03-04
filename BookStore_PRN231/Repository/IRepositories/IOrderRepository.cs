@@ -16,6 +16,6 @@ namespace Repository.IRepositories
         List<OrderDto> GetOrdersByUserId(string userId);
 
         void UpdateStatusOrder(int orderId, int statusId);
-        Order AddNewOrder(OrderCreateDto orderDto);
+        int AddNewOrder(OrderCreateDto orderDto);
     }
 }
