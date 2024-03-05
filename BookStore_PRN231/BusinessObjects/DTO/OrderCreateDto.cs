@@ -18,7 +18,7 @@ namespace BusinessObjects.DTO
         public string Phone { get; set; }
 
         public string? Note { get; set; }
-        public decimal? TotalPrice { get; set; }
+        public decimal? TotalPrice { get; set; } 
 
     }
 }

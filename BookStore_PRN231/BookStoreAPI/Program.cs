@@ -25,6 +25,13 @@ namespace BookStoreAPI
                 //options.OutputFormatters.Insert(0, new CsvOutputFormatter());
             });
 
+            builder.Services.AddDistributedMemoryCache();
+            builder.Services.AddSession(options =>
+            {
+                options.IdleTimeout = TimeSpan.FromMinutes(30);
+                options.Cookie.HttpOnly = true;
+            });
+
             builder.Services.AddAutoMapper(typeof(MapperConfig).Assembly);
 
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -143,6 +150,8 @@ namespace BookStoreAPI
             app.UseAuthentication();
 
             app.UseAuthorization();
+
+            app.UseSession();
 
             app.MapControllers();
 

@@ -12,6 +12,12 @@ namespace Repository.IRepositories
         List<OrderDetailDto> GetAllOrderDetails();
 
         List<OrderDetailDto> GetOrderDetailsByOrderId(int id);
-        void AddNewOrderDetail(OrderDetailCreateDto orderDetailCreateDto);
+        void AddNewOrderDetail(int orderId, OrderDetailCreateDto orderDetailCreateDto);
+
+        List<OrderDetailCreateDto> GetCart();
+
+        List<OrderDetailCreateDto> AddTocart(OrderDetailCreateDto item);
+
+        List<OrderDetailCreateDto> DeleteFromCart(int id);
     }
 }

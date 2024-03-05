@@ -1,4 +1,6 @@
 ﻿using BusinessObjects.DTO;
+using BusinessObjects.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Repository.IRepositories;
@@ -16,7 +18,8 @@ namespace BookStoreAPI.Controllers
         }
 
         [HttpGet("AllOrderDetail")]
-        public IActionResult GetAllOrderDetails() {
+        public IActionResult GetAllOrderDetails()
+        {
             try
             {
                 return Ok(_orderDetailRepository.GetAllOrderDetails());
@@ -39,15 +42,58 @@ namespace BookStoreAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
-
+        
         [HttpPost("Create")]
-        public IActionResult AddNewOrderDetail(OrderDetailCreateDto orderDetailCreateDto)
+        public IActionResult AddNewOrderDetail(int orderId, OrderDetailCreateDto orderDetailCreateDto)
         {
             try
             {
-                _orderDetailRepository.AddNewOrderDetail(orderDetailCreateDto);
+                _orderDetailRepository.AddNewOrderDetail(orderId, orderDetailCreateDto);
                 return Ok();
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpGet("Cart")]
+        public IActionResult ViewCart()
+        {
+            try
+            {
+
+                return Ok(_orderDetailRepository.GetCart());
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("AddToCart")]
+        public IActionResult AddToCart(OrderDetailCreateDto item)
+        {
+            try
+            {
+
+                return Ok(_orderDetailRepository.AddTocart(item));
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
+        }
+
+        [HttpPost("DeleteFromCart")]
+        public IActionResult DeleteFromCart(int id)
+        {
+            try
+            {
+
+                return Ok(_orderDetailRepository.DeleteFromCart(id));
+            }
+            catch (Exception ex)
             {
                 return BadRequest(ex.Message);
             }

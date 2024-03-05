@@ -37,7 +37,10 @@ namespace BusinessObjects.Mapper
 
             CreateMap<Order, OrderCreateDto>().ReverseMap();
 
-            CreateMap<OrderDetail, OrderDetailCreateDto>().ReverseMap();
+            CreateMap<OrderDetail, OrderDetailCreateDto>()
+                .ForMember(dest => dest.BookTitle, opt => opt.MapFrom(src => src.Book != null ? src.Book.Title : null))
+                .ForMember(dest => dest.BookPrice, opt => opt.MapFrom(src => src.Book != null ? src.Book.Price : null))
+                .ReverseMap();
 
             CreateMap<OrderDetail, OrderDetailDto>()
                 .ForMember(dest => dest.BookTitle, opt => opt.MapFrom(src => src.Book != null ? src.Book.Title : null))
