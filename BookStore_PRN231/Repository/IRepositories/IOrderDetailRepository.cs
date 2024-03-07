@@ -14,10 +14,10 @@ namespace Repository.IRepositories
         List<OrderDetailDto> GetOrderDetailsByOrderId(int id);
         void AddNewOrderDetail(int orderId, OrderDetailCreateDto orderDetailCreateDto);
 
-        List<OrderDetailCreateDto> GetCart();
+        Cart GetCart();
 
-        List<OrderDetailCreateDto> AddTocart(OrderDetailCreateDto item);
+        Cart AddTocart(OrderDetailCreateDto item);
 
-        List<OrderDetailCreateDto> DeleteFromCart(int id);
+        Cart DeleteFromCart(int id);
     }
 }

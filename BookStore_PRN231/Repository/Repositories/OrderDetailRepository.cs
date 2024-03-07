@@ -41,14 +41,14 @@ namespace Repository.Repositories
             }
         }
 
-        public List<OrderDetailCreateDto> AddTocart(OrderDetailCreateDto item)
+        public Cart AddTocart(OrderDetailCreateDto item)
         {
             try
             {
 
-                var cart = _httpContextAccessor.HttpContext.Session.Get<List<OrderDetailCreateDto>>("Cart") ?? new List<OrderDetailCreateDto>();
+                var cart = _httpContextAccessor.HttpContext.Session.Get<Cart>("Cart") ?? new Cart();
 
-                var existingItem = cart.FirstOrDefault(x => x.BookId == item.BookId);
+                var existingItem = cart.Items.FirstOrDefault(x => x.BookId == item.BookId);
 
                 if (existingItem != null)
                 {
@@ -58,7 +58,7 @@ namespace Repository.Repositories
                 else
                 {
                     
-                    cart.Add(new OrderDetailCreateDto
+                    cart.Items.Add(new OrderDetailCreateDto
                     {
                         BookId = item.BookId,
                         BookTitle = item.BookTitle,
@@ -77,15 +77,15 @@ namespace Repository.Repositories
             }
         }
 
-        public List<OrderDetailCreateDto> DeleteFromCart(int id)
+        public Cart DeleteFromCart(int id)
         {
             try
             {
-                var cart = _httpContextAccessor.HttpContext.Session.Get<List<OrderDetailCreateDto>>("Cart") ?? new List<OrderDetailCreateDto>();
-                var existingItem = cart.FirstOrDefault(x => x.BookId == id);
+                var cart = _httpContextAccessor.HttpContext.Session.Get<Cart>("Cart") ?? new Cart();
+                var existingItem = cart.Items.FirstOrDefault(x => x.BookId == id);
                 if (existingItem != null)
                 {
-                    cart.Remove(existingItem);
+                    cart.Items.Remove(existingItem);
                 }
 
                 _httpContextAccessor.HttpContext.Session.Set("Cart", cart);
@@ -116,13 +116,13 @@ namespace Repository.Repositories
             }
         }
 
-        public List<OrderDetailCreateDto> GetCart()
+        public Cart GetCart()
         {
             try
             {
 
                 // Lấy giỏ hàng từ Session
-                var cart = _httpContextAccessor.HttpContext.Session.Get<List<OrderDetailCreateDto>>("Cart") ?? new List<OrderDetailCreateDto>();
+                var cart = _httpContextAccessor.HttpContext.Session.Get<Cart>("Cart") ?? new Cart();
                 return cart;
             }
             catch (Exception ex)
