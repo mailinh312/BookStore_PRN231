@@ -1,3 +1,6 @@
+using BusinessObjects.Models;
+using Microsoft.AspNetCore.Identity;
+
 namespace BookStoreClient
 {
     public class Program
@@ -8,7 +11,7 @@ namespace BookStoreClient
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
-
+      
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.

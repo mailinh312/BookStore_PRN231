@@ -1,0 +1,173 @@
+﻿@using BusinessObjects.Models;
+@using BusinessObjects.DTO;
+@using Microsoft.AspNetCore.Identity;
+@model IEnumerable<BusinessObjects.DTO.BookDto>
+
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<script>
+    function submitForm() {
+        var form = document.getElementById("cateForm");
+        form.submit();
+    }
+</script>
+
+<!-- HEADER DESKTOP-->
+
+<header class="header-desktop">
+    <div class="section__content section__content--p30">
+        <div class="container-fluid">
+            <div class="header-wrap">
+                <form class="form-header" asp-action="BookManagerModel" method="get">
+                    <input class="au-input au-input--xl" type="text" name="search" placeholder="Tìm kiếm sản phẩm" />
+                    <button class="au-btn--submit" type="submit">
+                        <i class="zmdi zmdi-search"></i>
+                    </button>
+                </form>
+
+                <div class="header-button">
+
+                    <div class="account-wrap">
+                        <div class="account-item clearfix js-item-menu">
+                            <div class="image">
+                            </div>
+                            <div class="content">
+                                <a class="js-acc-btn" asp-page="/Account/Manage/Index"></a>
+                            </div>
+                            <div class="account-dropdown js-dropdown">
+                                <div class="account-dropdown__body">
+                                    <div class="account-dropdown__item">
+                                        <a asp-area="Identity" asp-page="/Account/Manage/Index">
+                                            <i class="zmdi zmdi-account"></i>Tài khoản
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="account-dropdown__footer">
+                                    <a href="/logout">
+                                        <i class="zmdi zmdi-power"></i>Đăng xuất
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<!--END HEADER DESKTOP-->
+
+<div class="section__content section__content--p30">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="title-5 m-b-35">Quản lý sản phẩm</h1>
+                <div class="table-data__tool">
+                    <div class="table-data__tool-left">
+                        <form id="cateForm" action="product" method="get">
+                            <div class="rs-select2--light rs-select2--md">
+
+                                <select class="js-select2" name="cid" onchange="submitForm()">
+                                    <option value="0">Tất cả thể loại</option>
+                                    @foreach (var item in ViewBag.categories)
+                                    {
+                                        if (item.CategoryId == ViewBag.selectedCategoryId)
+                                        {
+                                            <option value="@item.CategoryId" selected>@item.CategoryName</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.CategoryId">@item.CategoryName</option>
+                                        }
+                                    }
+                                </select>
+
+                                <div class="dropDownSelect2"></div>
+                            </div>
+                            <div class="rs-select2--light rs-select2--md">
+
+                                <select class="js-select2" name="aid" onchange="submitForm()">
+                                    <option value="0">Tác giả</option>
+
+                                    @foreach (var item in ViewBag.authors)
+                                    {
+                                        if (item.AuthorId == ViewBag.selectedAuthorId)
+                                        {
+                                            <option value="@item.AuthorId" selected>@item.AuthorName</option>
+                                        }
+                                        else
+                                        {
+                                            <option value="@item.AuthorId">@item.AuthorName</option>
+                                        }
+                                    }
+                                </select>
+
+                                <div class="dropDownSelect2"></div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="table-data__tool-right">
+                        <button class="au-btn au-btn-icon au-btn--green au-btn--small" style="background-color: aliceblue">
+                            <a asp-page="./AddProduct"> <i class="zmdi zmdi-plus"></i>Thêm sản phẩm</a>
+                        </button>
+
+                    </div>
+                </div>
+                <div class="table-responsive table--no-card m-b-30">
+                    <table class="table table-borderless table-striped table-earning">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Hình ảnh</th>
+                                <th>Tiêu đề</th>
+                                <th>Thể loại</th>
+                                <th>Tác giả</th>
+                                <th>Nhà xuất bản</th>
+                                <th>Ngày xuất bản</th>
+                                <th class="text-right">Giá</th>
+                                <th>Số lượng trong kho</th>
+                                <th>Hoạt động</th>
+                                <th>Tùy chọn</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var book in ViewBag.books)
+                            {
+                                <tr>
+                                    <td>@book.BookId</td>
+                                    <td> <img src="~/Images/@book.ImageUrl" /></td>
+                                    <td>@book.Title</td>
+                                    <td>@book.CategoryName</td>
+                                    <td>@book.AuthorName</td>
+                                    <td>@book.Publisher</td>
+                                    <td>@book.PublishDate</td>
+                                    <td class="text-right">@book.Price</td>
+                                    <td>@book.StockQuantity</td>
+                                    <td>@book.Active</td>
+                                    <td>
+                                        <div class="table-data-feature">
+                                            <button class="item" data-toggle="tooltip" data-placement="top" title="Send">
+                                                <i class="zmdi zmdi-mail-send"></i>
+                                            </button>
+                                            <button class="item" data-toggle="tooltip" data-placement="top" title="Edit">
+                                                <a asp-page="UpdateProduct" asp-route-id="@book.BookId"><i class="zmdi zmdi-edit"></i></a>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
