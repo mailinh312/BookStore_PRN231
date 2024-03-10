@@ -42,7 +42,7 @@ namespace BookStoreAPI.Controllers
                 return BadRequest(ex.Message);
             }
         }
-        
+
         [HttpPost("Create")]
         public IActionResult AddNewOrderDetail(int orderId, OrderDetailCreateDto orderDetailCreateDto)
         {
@@ -50,48 +50,6 @@ namespace BookStoreAPI.Controllers
             {
                 _orderDetailRepository.AddNewOrderDetail(orderId, orderDetailCreateDto);
                 return Ok();
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        [HttpGet("Cart")]
-        public IActionResult ViewCart()
-        {
-            try
-            {
-
-                return Ok(_orderDetailRepository.GetCart());
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        [HttpPost("AddToCart")]
-        public IActionResult AddToCart(OrderDetailCreateDto item)
-        {
-            try
-            {
-
-                return Ok(_orderDetailRepository.AddTocart(item));
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex.Message);
-            }
-        }
-
-        [HttpPost("DeleteFromCart")]
-        public IActionResult DeleteFromCart(int id)
-        {
-            try
-            {
-
-                return Ok(_orderDetailRepository.DeleteFromCart(id));
             }
             catch (Exception ex)
             {

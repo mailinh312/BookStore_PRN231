@@ -8,16 +8,13 @@ namespace BusinessObjects.DTO
 {
     public class Cart
     {
-        public List<OrderDetailCreateDto> Items { get; set; }
+        public List<CartItem> Items { get; set; }
         public decimal? TotalPrice { get; set; }
 
         public Cart()
         {
+            Items = new List<CartItem>();
             TotalPrice = 0;
-            foreach (var item in Items)
-            {
-                TotalPrice += item.Price;
-            }
         }
     }
 }

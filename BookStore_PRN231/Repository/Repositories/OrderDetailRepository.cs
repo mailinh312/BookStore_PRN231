@@ -32,7 +32,7 @@ namespace Repository.Repositories
             {
                 OrderDetail orderDetail = _mapper.Map<OrderDetail>(orderDetailCreateDto);
                 orderDetail.OrderId = orderId;
-                _context.Add(orderDetail);
+                _context.OrderDetails.Add(orderDetail);
                 _context.SaveChanges();
             }
             catch (Exception ex)
@@ -41,11 +41,19 @@ namespace Repository.Repositories
             }
         }
 
-        public Cart AddTocart(OrderDetailCreateDto item)
+        public decimal? UpdateTotalPrice(List<CartItem> cartItems)
+        {
+            decimal? price = 0;
+            foreach (var item in cartItems)
+            {
+                price += item.Quantity * item.BookPrice;
+            }
+            return price;
+        }
+        public Cart AddTocart(CartItem item)
         {
             try
             {
-
                 var cart = _httpContextAccessor.HttpContext.Session.Get<Cart>("Cart") ?? new Cart();
 
                 var existingItem = cart.Items.FirstOrDefault(x => x.BookId == item.BookId);
@@ -53,20 +61,21 @@ namespace Repository.Repositories
                 if (existingItem != null)
                 {
                     existingItem.Quantity += item.Quantity;
-                    existingItem.Price = existingItem.Quantity * existingItem.BookPrice;
                 }
                 else
                 {
-                    
-                    cart.Items.Add(new OrderDetailCreateDto
+
+                    cart.Items.Add(new CartItem
                     {
                         BookId = item.BookId,
-                        BookTitle = item.BookTitle,
-                        BookPrice = item.BookPrice,
                         Quantity = item.Quantity,
-                        Price = item.Quantity * item.BookPrice
+                        BookPrice = item.BookPrice,
+                        BookTitle = item.BookTitle,
+
                     });
                 }
+
+                cart.TotalPrice = UpdateTotalPrice(cart.Items);
 
                 _httpContextAccessor.HttpContext.Session.Set("Cart", cart);
                 return cart;
@@ -87,6 +96,8 @@ namespace Repository.Repositories
                 {
                     cart.Items.Remove(existingItem);
                 }
+
+                cart.TotalPrice = UpdateTotalPrice(cart.Items);
 
                 _httpContextAccessor.HttpContext.Session.Set("Cart", cart);
                 return cart;
@@ -120,7 +131,6 @@ namespace Repository.Repositories
         {
             try
             {
-
                 // Lấy giỏ hàng từ Session
                 var cart = _httpContextAccessor.HttpContext.Session.Get<Cart>("Cart") ?? new Cart();
                 return cart;

@@ -21,7 +21,6 @@ namespace BookStoreAPI.Controllers
         {
             try
             {
-
                 return Ok(_orderDetailRepository.GetCart());
             }
             catch (Exception ex)
@@ -31,7 +30,7 @@ namespace BookStoreAPI.Controllers
         }
 
         [HttpPost("AddToCart")]
-        public IActionResult AddToCart(OrderDetailCreateDto item)
+        public IActionResult AddToCart(CartItem item)
         {
             try
             {

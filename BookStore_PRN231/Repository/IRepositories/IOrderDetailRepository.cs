@@ -16,7 +16,7 @@ namespace Repository.IRepositories
 
         Cart GetCart();
 
-        Cart AddTocart(OrderDetailCreateDto item);
+        Cart AddTocart(CartItem item);
 
         Cart DeleteFromCart(int id);
     }
