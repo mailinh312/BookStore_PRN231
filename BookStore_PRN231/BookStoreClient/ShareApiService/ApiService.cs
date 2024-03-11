@@ -58,5 +58,19 @@ namespace BookStoreClient.ShareApiService
             List<BookDto> books = System.Text.Json.JsonSerializer.Deserialize<List<BookDto>>(strBook, options);
             return books;
         }
+
+        public async Task<BookDto> GetBookById(int id)
+        {
+
+            HttpResponseMessage response = await client.GetAsync(ApiUrl + "/Book/Book?id=" + id);
+            string strBook = await response.Content.ReadAsStringAsync();
+
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true,
+            };
+            BookDto book = System.Text.Json.JsonSerializer.Deserialize<BookDto>(strBook, options);
+            return book;
+        }
     }
 }
