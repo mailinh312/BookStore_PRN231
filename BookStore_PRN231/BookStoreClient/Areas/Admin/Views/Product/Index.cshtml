@@ -1,7 +1,7 @@
 ﻿@using BusinessObjects.Models;
 @using BusinessObjects.DTO;
 @using Microsoft.AspNetCore.Identity;
-@model IEnumerable<BusinessObjects.DTO.BookDto>
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 
 @{
@@ -22,12 +22,13 @@
     <div class="section__content section__content--p30">
         <div class="container-fluid">
             <div class="header-wrap">
-                <form class="form-header" asp-action="BookManagerModel" method="get">
-                    <input class="au-input au-input--xl" type="text" name="search" placeholder="Tìm kiếm sản phẩm" />
+                <form class="form-header" asp-action="product" method="get">
+                    <input class="au-input au-input--xl" type="text" name="search" value="@ViewBag.searchString" placeholder="Tìm kiếm sản phẩm" />
                     <button class="au-btn--submit" type="submit">
                         <i class="zmdi zmdi-search"></i>
                     </button>
                 </form>
+
 
                 <div class="header-button">
 
@@ -69,42 +70,19 @@
                 <h1 class="title-5 m-b-35">Quản lý sản phẩm</h1>
                 <div class="table-data__tool">
                     <div class="table-data__tool-left">
-                        <form id="cateForm" action="product" method="get">
+                        <form id="cateForm" asp-action="Index" method="get">
                             <div class="rs-select2--light rs-select2--md">
 
-                                <select class="js-select2" name="cid" onchange="submitForm()">
+                                <select class="js-select2" name="cid" asp-items="@ViewBag.categories" onchange="submitForm()">
                                     <option value="0">Tất cả thể loại</option>
-                                    @foreach (var item in ViewBag.categories)
-                                    {
-                                        if (item.CategoryId == ViewBag.selectedCategoryId)
-                                        {
-                                            <option value="@item.CategoryId" selected>@item.CategoryName</option>
-                                        }
-                                        else
-                                        {
-                                            <option value="@item.CategoryId">@item.CategoryName</option>
-                                        }
-                                    }
                                 </select>
 
                                 <div class="dropDownSelect2"></div>
                             </div>
                             <div class="rs-select2--light rs-select2--md">
 
-                                <select class="js-select2" name="aid" onchange="submitForm()">
+                                <select class="js-select2" name="aid" asp-items="@ViewBag.authors" onchange="submitForm()">
                                     <option value="0">Tác giả</option>
-
-                                    @foreach (var item in ViewBag.authors)
-                                    {
-                                        if (item.AuthorId == ViewBag.selectedAuthorId)
-                                        {
-                                            <option value="@item.AuthorId" selected>@item.AuthorName</option>
-                                        }
-                                        else
-                                        {
-                                            <option value="@item.AuthorId">@item.AuthorName</option>
-                                        }
-                                    }
                                 </select>
 
                                 <div class="dropDownSelect2"></div>
@@ -113,7 +91,7 @@
                     </div>
                     <div class="table-data__tool-right">
                         <button class="au-btn au-btn-icon au-btn--green au-btn--small" style="background-color: aliceblue">
-                            <a asp-page="./AddProduct"> <i class="zmdi zmdi-plus"></i>Thêm sản phẩm</a>
+                            <a href="/admin/product/addproduct"> <i class="zmdi zmdi-plus"></i>Thêm sản phẩm</a>
                         </button>
 
                     </div>
@@ -155,7 +133,7 @@
                                                 <i class="zmdi zmdi-mail-send"></i>
                                             </button>
                                             <button class="item" data-toggle="tooltip" data-placement="top" title="Edit">
-                                                <a asp-page="UpdateProduct" asp-route-id="@book.BookId"><i class="zmdi zmdi-edit"></i></a>
+                                                <a asp-controller="Product" asp-action="UpdateProductForm" asp-route-bookId="@book.BookId"><i class="zmdi zmdi-edit"></i></a>
                                             </button>
                                         </div>
                                     </td>

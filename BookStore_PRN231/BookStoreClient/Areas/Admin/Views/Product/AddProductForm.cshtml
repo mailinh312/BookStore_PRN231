@@ -1,0 +1,159 @@
+﻿@model BusinessObjects.DTO.BookCreateDto
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "AddProductForm";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<!-- HEADER DESKTOP-->
+
+<header class="header-desktop">
+    <div class="section__content section__content--p30">
+        <div class="container-fluid">
+            <div class="header-wrap">
+                <form class="form-header" asp-action="BookManagerModel" method="get">
+                </form>
+
+                <div class="header-button">
+
+                    <div class="account-wrap">
+                        <div class="account-item clearfix js-item-menu">
+                            <div class="image">
+                            </div>
+                            <div class="content">
+                                <a class="js-acc-btn" asp-page="/Account/Manage/Index"></a>
+                            </div>
+                            <div class="account-dropdown js-dropdown">
+                                <div class="account-dropdown__body">
+                                    <div class="account-dropdown__item">
+                                        <a asp-area="Identity" asp-page="/Account/Manage/Index">
+                                            <i class="zmdi zmdi-account"></i>Tài khoản
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="account-dropdown__footer">
+                                    <a href="/logout">
+                                        <i class="zmdi zmdi-power"></i>Đăng xuất
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<!--END HEADER DESKTOP-->
+
+<div class="section__content section__content--p30">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="title-5 m-b-35">Thêm sản phẩm</h1>
+
+                <div class="table-responsive table--no-card m-b-30">
+                    <form method="post" asp-action="AddProduct" enctype="multipart/form-data">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group">
+                            <label asp-for="Title" class="control-label"></label>
+                            <input asp-for="Title" class="form-control" />
+                            <span asp-validation-for="Title" class="text-danger"></span>
+                        </div>
+                        <br />
+                        <div class="form-group">
+                            <label asp-for="CategoryId" class="control-label"></label>
+
+                            <select class="form-control" asp-for="CategoryId" asp-items="@ViewBag.categories">
+                                <option value="0">Chọn phân loại</option>
+                            </select>
+                            <span asp-validation-for="CategoryId" class="text-danger"></span>
+
+                        </div>
+                        <br />
+
+                        <div class="form-group">
+                            <label asp-for="AuthorId" class="control-label"></label>
+
+                            <select class="form-control" asp-for="AuthorId" asp-items="@ViewBag.authors">
+                                <option value="0">Chọn tác giả</option>
+                            </select>
+                            <span asp-validation-for="AuthorId" class="text-danger"></span>
+
+                        </div>
+                        <br />
+
+                        <div class="form-group">
+                            <label asp-for="OriginPrice" class="control-label"></label>
+                            <input asp-for="OriginPrice" class="form-control" />
+                            <span asp-validation-for="OriginPrice" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="Price" class="control-label"></label>
+                            <input asp-for="Price" class="form-control" />
+                            <span asp-validation-for="Price" class="text-danger"></span>
+                        </div>
+                        <br />
+
+                        <div class="form-group">
+                            <label asp-for="Description" class="control-label"></label>
+                            <textarea id="summernote" asp-for="Description" class="form-control"></textarea>
+                            <span asp-validation-for="Description" class="text-danger"></span>
+                        </div>
+                        <div class="form-group">
+                            <label asp-for="Publisher" class="control-label"></label>
+                            <input asp-for="Publisher" class="form-control" />
+                            <span asp-validation-for="Publisher" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="PublishDate" class="control-label"></label>
+                            <input type="date" asp-for="PublishDate" class="form-control" />
+                            <span asp-validation-for="PublishDate" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="ImageUrl" class="control-label"></label>
+                            <input type="file" name="imageFile" class="form-control"/>
+                            <span asp-validation-for="ImageUrl" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="StockQuantity" class="control-label"></label>
+                            <input asp-for="StockQuantity" class="form-control" />
+                            <span asp-validation-for="StockQuantity" class="text-danger"></span>
+                        </div>
+
+                        <br />
+
+                        <div class="form-group">
+                            <input type="submit" value="Thêm sản phẩm" class="btn btn-success btn-sm" />
+                            <a href="/admin/product" class="btn btn-sm btn-primary">Quay lại danh sách sản phẩm</a>
+
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+</script>
+
+@section Scripts{
+    <script src="https://cdn.tiny.cloud/1/76gi9016qlfwmn8jiijfloc974a5ofre3p85pckmsmk0sj3y/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+
+    <!-- Place the following <script> and <textarea> tags your HTML's <body> -->
+    <script>
+        tinymce.init({
+            selector: 'textarea',
+            plugins: 'anchor autolink charmap codesample emoticons image link lists media searchreplace table visualblocks wordcount',
+            toolbar: 'undo redo | blocks fontfamily fontsize | bold italic underline strikethrough | link image media table | align lineheight | numlist bullist indent outdent | emoticons charmap | removeformat',
+        });
+    </script>
+}
