@@ -23,7 +23,6 @@ namespace BookStoreClient.Areas.Admin.Controllers
         private readonly IWebHostEnvironment _environment;
         public int? selectCid;
         public int? selectAid;
-        public string img;
         public ProductController(IWebHostEnvironment environment)
         {
             client = new HttpClient();
@@ -88,27 +87,23 @@ namespace BookStoreClient.Areas.Admin.Controllers
 
         public async Task<IActionResult> AddProduct(BookCreateDto model, IFormFile imageFile)
         {
+            
             if (ModelState.IsValid)
             {
                 try
                 {
-                    String imgURL = "";
+                    
                     if (imageFile != null)
                     {
 
-                        imgURL = imageFile.FileName;
-                        var file = Path.Combine(_environment.WebRootPath, "Images", imageFile.FileName);
+                        var file = Path.Combine(_environment.WebRootPath, @"Images");
+                        string filename_new = Guid.NewGuid().ToString()+"_"+imageFile.FileName;
 
-                        using (var fileStream = new FileStream(file, FileMode.Create))
+                        using (var fileStream = new FileStream(Path.Combine(file, filename_new), FileMode.Create))
                         {
                             imageFile.CopyTo(fileStream);
                         }
-                    }
-
-
-                    if (imgURL != null)
-                    {
-                        model.ImageUrl = imgURL;
+                        model.ImageUrl = @"\Images\" + filename_new;
                     }
 
                     var jsonContent = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json");
@@ -144,7 +139,6 @@ namespace BookStoreClient.Areas.Admin.Controllers
             BookDto book = await apiService.GetBookById(bookId);
             selectCid = book.CategoryId;
             selectAid = book.AuthorId;
-            img = book.ImageUrl;
             ViewBag.categories = new SelectList(categories, "CategoryId", "CategoryName", selectCid);
             ViewBag.authors = new SelectList(authors, "AuthorId", "AuthorName", selectAid);
             return View(book);
@@ -155,30 +149,20 @@ namespace BookStoreClient.Areas.Admin.Controllers
         public async Task<IActionResult> UpdateProduct(BookDto model, IFormFile imageFile)
         {
            
-            if (ModelState.IsValid)
             {
                 try
                 {
-                    String imgURL = "";
                     if (imageFile != null)
                     {
 
-                        imgURL = imageFile.FileName;
-                        var file = Path.Combine(_environment.WebRootPath, "Images", imageFile.FileName);
+                        var file = Path.Combine(_environment.WebRootPath, @"Images");
+                        string filename_new = Guid.NewGuid().ToString() + "_" + imageFile.FileName;
 
-                        using (var fileStream = new FileStream(file, FileMode.Create))
+                        using (var fileStream = new FileStream(Path.Combine(file, filename_new), FileMode.Create))
                         {
                             imageFile.CopyTo(fileStream);
                         }
-                    }
-                    
-                    if (imgURL != null)
-                    {
-                        model.ImageUrl = imgURL;
-                    }
-                    else
-                    {
-                        model.ImageUrl = img;
+                        model.ImageUrl = @"\Images\" + filename_new;
                     }
 
                     model.AuthorName = "";
