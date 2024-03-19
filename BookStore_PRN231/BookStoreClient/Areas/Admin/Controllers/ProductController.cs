@@ -17,19 +17,18 @@ namespace BookStoreClient.Areas.Admin.Controllers
     [Route("admin/product")]
     public class ProductController : Controller
     {
-        private readonly HttpClient client = null;
-        private string ProductApiUrl = "";
-        private readonly ApiService apiService;
+
+        private readonly ProductApiService productApiService;
+        private readonly CategoryApiService categoryApiService;
+        private readonly AuthorApiService authorApiService;
         private readonly IWebHostEnvironment _environment;
         public int? selectCid;
         public int? selectAid;
         public ProductController(IWebHostEnvironment environment)
         {
-            client = new HttpClient();
-            var contentType = new MediaTypeWithQualityHeaderValue("application/json");
-            client.DefaultRequestHeaders.Accept.Add(contentType);
-            ProductApiUrl = "https://localhost:5000/api";
-            apiService = new ApiService();
+            productApiService = new ProductApiService();
+            categoryApiService = new CategoryApiService();
+            authorApiService = new AuthorApiService();
             _environment = environment;
         }
 
@@ -37,9 +36,9 @@ namespace BookStoreClient.Areas.Admin.Controllers
         public async Task<IActionResult> Index(int? cid, int? aid, string? search)
         {
 
-            List<CategoryDto> categories = await apiService.GetCategories();
-            List<AuthorDto> authors = await apiService.GetAuthors();
-            List<BookDto> books = await apiService.GetBooks();
+            List<CategoryDto> categories = await categoryApiService.GetCategories();
+            List<AuthorDto> authors = await authorApiService.GetAuthors();
+            List<BookDto> books = await productApiService.GetBooks();
 
             if (search != null)
             {
@@ -75,8 +74,8 @@ namespace BookStoreClient.Areas.Admin.Controllers
         [HttpGet("addproduct")]
         public async Task<IActionResult> AddProductForm()
         {
-            List<CategoryDto> categories = await apiService.GetCategories();
-            List<AuthorDto> authors = await apiService.GetAuthors();
+            List<CategoryDto> categories = await categoryApiService.GetCategories();
+            List<AuthorDto> authors = await authorApiService.GetAuthors();
             BookCreateDto book = new BookCreateDto();
             ViewBag.categories = new SelectList(categories, "CategoryId", "CategoryName", selectCid);
             ViewBag.authors = new SelectList(authors, "AuthorId", "AuthorName", selectAid);
@@ -87,17 +86,17 @@ namespace BookStoreClient.Areas.Admin.Controllers
 
         public async Task<IActionResult> AddProduct(BookCreateDto model, IFormFile imageFile)
         {
-            
+
             if (ModelState.IsValid)
             {
                 try
                 {
-                    
+
                     if (imageFile != null)
                     {
 
                         var file = Path.Combine(_environment.WebRootPath, @"Images");
-                        string filename_new = Guid.NewGuid().ToString()+"_"+imageFile.FileName;
+                        string filename_new = Guid.NewGuid().ToString() + "_" + imageFile.FileName;
 
                         using (var fileStream = new FileStream(Path.Combine(file, filename_new), FileMode.Create))
                         {
@@ -106,9 +105,9 @@ namespace BookStoreClient.Areas.Admin.Controllers
                         model.ImageUrl = @"\Images\" + filename_new;
                     }
 
-                    var jsonContent = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json");
 
-                    HttpResponseMessage response = await client.PostAsync(ProductApiUrl + "/Book/Create", jsonContent);
+
+                    HttpResponseMessage response = await productApiService.CreateBook(model);
                     if (response.IsSuccessStatusCode)
                     {
                         // Sản phẩm được tạo thành công
@@ -134,9 +133,9 @@ namespace BookStoreClient.Areas.Admin.Controllers
         [HttpGet("updateproduct")]
         public async Task<IActionResult> UpdateProductForm(int bookId)
         {
-            List<CategoryDto> categories = await apiService.GetCategories();
-            List<AuthorDto> authors = await apiService.GetAuthors();
-            BookDto book = await apiService.GetBookById(bookId);
+            List<CategoryDto> categories = await categoryApiService.GetCategories();
+            List<AuthorDto> authors = await authorApiService.GetAuthors();
+            BookDto book = await productApiService.GetBookById(bookId);
             selectCid = book.CategoryId;
             selectAid = book.AuthorId;
             ViewBag.categories = new SelectList(categories, "CategoryId", "CategoryName", selectCid);
@@ -148,7 +147,7 @@ namespace BookStoreClient.Areas.Admin.Controllers
 
         public async Task<IActionResult> UpdateProduct(BookDto model, IFormFile imageFile)
         {
-           
+
             {
                 try
                 {
@@ -168,9 +167,7 @@ namespace BookStoreClient.Areas.Admin.Controllers
                     model.AuthorName = "";
                     model.CategoryName = "";
 
-                    var jsonContent = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json");
-
-                    HttpResponseMessage response = await client.PutAsync(ProductApiUrl + "/Book/Update", jsonContent);
+                    HttpResponseMessage response = await productApiService.UpdateBook(model);
                     if (response.IsSuccessStatusCode)
                     {
                         // Sản phẩm được tạo thành công

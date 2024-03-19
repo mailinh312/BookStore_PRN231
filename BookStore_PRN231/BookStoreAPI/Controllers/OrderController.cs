@@ -28,7 +28,7 @@ namespace BookStoreAPI.Controllers
             }
         }
 
-        [HttpGet("Order")]
+        [HttpGet("{id}")]
         public IActionResult GetOrderById(int id)
         {
             try
@@ -74,6 +74,19 @@ namespace BookStoreAPI.Controllers
             {
                 _orderRepository.UpdateStatusOrder(orderId, statusId);
                 return Ok();
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+        [HttpGet("AllStatus")]
+        public IActionResult GetAllStatus()
+        {
+            try
+            {
+                return Ok(_orderRepository.GetAllStatus());
             }
             catch (Exception ex)
             {

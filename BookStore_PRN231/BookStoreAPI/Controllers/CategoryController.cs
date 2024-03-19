@@ -41,7 +41,7 @@ namespace BookStoreAPI.Controllers
             }
         }
 
-        [HttpGet("Category")]
+        [HttpGet("{id}")]
         public IActionResult GetCategoryById(int id)
         {
             try

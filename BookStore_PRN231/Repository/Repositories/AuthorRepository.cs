@@ -23,7 +23,7 @@ namespace Repository.Repositories
         {
             try
             {
-                if (_context.Authors.FirstOrDefault(x => x.AuthorName.ToUpper().Equals(authorDto.AuthorName)) != null)
+                if (_context.Authors.FirstOrDefault(x => x.AuthorName.ToUpper().Trim().Equals(authorDto.AuthorName.ToUpper().Trim())) != null)
                 {
                     throw new Exception("Author existed!");
                 }
@@ -102,9 +102,14 @@ namespace Repository.Repositories
                     throw new Exception("Author does not existed!");
                 }
                 Author author = _context.Authors.FirstOrDefault(x => x.AuthorId == authorDto.AuthorId);
+
+                if (_context.Authors.Any(x => x.AuthorName.ToUpper().Trim().Equals(authorDto.AuthorName.ToUpper().Trim())))
+                {
+                    throw new Exception("Author name existed!");
+                }
                 _mapper.Map(authorDto, author);
 
-                _context.Authors.Update(author);
+                
 
                 if (!author.Active)
                 {
@@ -115,6 +120,7 @@ namespace Repository.Repositories
                         _context.Books.Update(book);
                     }
                 }
+                _context.Authors.Update(author);
                 _context.SaveChanges();
 
             }

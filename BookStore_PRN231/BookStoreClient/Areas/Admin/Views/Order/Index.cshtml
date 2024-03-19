@@ -1,0 +1,142 @@
+﻿@using BusinessObjects.Models;
+@using BusinessObjects.DTO;
+@using Microsoft.AspNetCore.Identity;
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model List<OrderDto>
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<script>
+    function submitForm(orderId) {
+        var form = document.getElementById("statusForm_"+orderId);
+        // Hiển thị thông báo trước khi submit
+        var isConfirmed = confirm("Thay đổi trạng thái đơn hàng?");
+
+        // Nếu người dùng đồng ý, thì submit form
+        if (isConfirmed == true) {
+            form.submit();
+        }
+        else {
+            //event.preventDefault();
+            window.location.href = '';
+            
+        }
+    }
+</script>
+
+<!-- HEADER DESKTOP-->
+
+<header class="header-desktop">
+    <div class="section__content section__content--p30">
+        <div class="container-fluid">
+            <div class="header-wrap">
+                <form class="form-header" asp-action="Index" method="get">
+                    <input class="au-input au-input--xl" type="text" name="search" value="@ViewBag.searchString" placeholder="Nhập mã đơn hàng" />
+                    <button class="au-btn--submit" type="submit">
+                        <i class="zmdi zmdi-search"></i>
+                    </button>
+                </form>
+
+                <div class="header-button">
+
+                    <div class="account-wrap">
+                        <div class="account-item clearfix js-item-menu">
+                            <div class="image">
+                            </div>
+                            <div class="content">
+                                <a class="js-acc-btn" asp-page="/Account/Manage/Index"></a>
+                            </div>
+                            <div class="account-dropdown js-dropdown">
+                                <div class="account-dropdown__body">
+                                    <div class="account-dropdown__item">
+                                        <a asp-area="Identity" asp-page="/Account/Manage/Index">
+                                            <i class="zmdi zmdi-account"></i>Tài khoản
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="account-dropdown__footer">
+                                    <a href="/logout">
+                                        <i class="zmdi zmdi-power"></i>Đăng xuất
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<!--END HEADER DESKTOP-->
+
+<div class="section__content section__content--p30">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="title-5 m-b-35">Quản lý đơn hàng</h1>
+                <div class="table-data__tool">
+                    <div class="table-data__tool-left">
+                    </div>
+                    <div class="table-data__tool-right">
+                    </div>
+                </div>
+                <div class="table-responsive table--no-card m-b-30">
+                    <table class="table table-borderless table-striped table-earning">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Người đặt hàng</th>
+                                <th>Ngày đặt hàng</th>
+                                <th>Người nhận</th>
+                                <th>Địa chỉ</th>
+                                <th>Tổng thanh toán</th>
+                                <th>Trạng thái</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var order in Model)
+                            {
+                                <tr>
+                                    <td>@order.OrderId</td>
+                                    <td>@order.Username</td>
+                                    <td>@order.OrderDate</td>
+                                    <td>@order.Receiver</td>
+                                    <td>@order.Address</td>
+                                    <td>@order.TotalPrice</td>
+                                    <td>
+                                        <form id="statusForm_@order.OrderId" method="post" asp-action="UpdateOrderStatus">
+                                            <div class="rs-select2--light rs-select2--md">
+                                                <select class="js-select2" name="sid" onchange="submitForm(@order.OrderId)" asp-for="@order.StatusId">
+
+                                                    @foreach (var item in @ViewBag.Status)
+                                                    {
+                                                        <option value="@item.StatusId">@item.StatusName</option>
+                                                    }
+                                                </select>
+                                                <div class="dropDownSelect2"></div>
+                                            </div>
+                                            <input type="hidden" name="orderId" value="@order.OrderId" />
+                                        </form>
+
+                                    </td>
+                                    <td>
+                                        <div class="table-data-feature">
+                                            <button class="item" data-toggle="tooltip" data-placement="top" title="Detail">
+                                                <a asp-action="DetailOrder" asp-route-orderId="@order.OrderId"><i class="zmdi zmdi-mail-send"></i></a>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+

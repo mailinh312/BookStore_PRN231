@@ -1,0 +1,112 @@
+﻿@using BusinessObjects.Models;
+@using BusinessObjects.DTO;
+@using Microsoft.AspNetCore.Identity;
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@model List<CategoryDto>
+
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<!-- HEADER DESKTOP-->
+
+<header class="header-desktop">
+    <div class="section__content section__content--p30">
+        <div class="container-fluid">
+            <div class="header-wrap">
+                <form class="form-header" asp-action="Index" method="get">
+                    <input class="au-input au-input--xl" type="text" name="search" value="@ViewBag.searchString" placeholder="Tìm kiếm sản phẩm" />
+                    <button class="au-btn--submit" type="submit">
+                        <i class="zmdi zmdi-search"></i>
+                    </button>
+                </form>
+
+
+                <div class="header-button">
+
+                    <div class="account-wrap">
+                        <div class="account-item clearfix js-item-menu">
+                            <div class="image">
+                            </div>
+                            <div class="content">
+                                <a class="js-acc-btn" asp-page="/Account/Manage/Index"></a>
+                            </div>
+                            <div class="account-dropdown js-dropdown">
+                                <div class="account-dropdown__body">
+                                    <div class="account-dropdown__item">
+                                        <a asp-area="Identity" asp-page="/Account/Manage/Index">
+                                            <i class="zmdi zmdi-account"></i>Tài khoản
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="account-dropdown__footer">
+                                    <a href="/logout">
+                                        <i class="zmdi zmdi-power"></i>Đăng xuất
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<!--END HEADER DESKTOP-->
+
+<div class="section__content section__content--p30">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="title-5 m-b-35">Quản lý thể loại</h1>
+                <div class="table-data__tool">
+                    <div class="table-data__tool-left">
+                        
+                    </div>
+                    <div class="table-data__tool-right" style="margin-right: 220px">
+                        <button class="au-btn au-btn-icon au-btn--green au-btn--small" style="background-color: aliceblue">
+                            <a href="/admin/category/addcategory"> <i class="zmdi zmdi-plus"></i>Thêm thể loại</a>
+                        </button>
+
+                    </div>
+                </div>
+                <div class="table-responsive table--no-card m-b-30" style="width: 900px">
+                    <table class="table table-borderless table-striped table-earning">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Tên thể loại</th>
+                                <th>Hoạt động</th>
+                                <th>Tùy chọn</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var category in Model)
+                            {
+                                <tr>
+                                    
+                                    <td>@category.CategoryId</td>
+                                    <td>@category.CategoryName</td>
+                                    <td>@category.Active</td>
+                                    <td>
+                                        <div class="table-data-feature">
+                                            <button class="item" style="margin-right: 80px" data-toggle="tooltip" data-placement="top" title="Edit">
+                                                <a asp-controller="Category" asp-action="UpdateCategoryForm" asp-route-categoryId="@category.CategoryId"><i class="zmdi zmdi-edit"></i></a>
+                                            </button>
+                                        </div>
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+

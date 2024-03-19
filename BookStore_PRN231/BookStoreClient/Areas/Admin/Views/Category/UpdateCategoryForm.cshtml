@@ -1,0 +1,92 @@
+﻿@model BusinessObjects.DTO.CategoryDto
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+@{
+    ViewData["Title"] = "UpdateCategoryForm";
+    Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
+}
+
+<!-- HEADER DESKTOP-->
+
+<header class="header-desktop">
+    <div class="section__content section__content--p30">
+        <div class="container-fluid">
+            <div class="header-wrap">
+                <form class="form-header" asp-action="BookManagerModel" method="get">
+                </form>
+
+                <div class="header-button">
+
+                    <div class="account-wrap">
+                        <div class="account-item clearfix js-item-menu">
+                            <div class="image">
+                            </div>
+                            <div class="content">
+                                <a class="js-acc-btn" asp-page="/Account/Manage/Index"></a>
+                            </div>
+                            <div class="account-dropdown js-dropdown">
+                                <div class="account-dropdown__body">
+                                    <div class="account-dropdown__item">
+                                        <a asp-area="Identity" asp-page="/Account/Manage/Index">
+                                            <i class="zmdi zmdi-account"></i>Tài khoản
+                                        </a>
+                                    </div>
+                                </div>
+                                <div class="account-dropdown__footer">
+                                    <a href="/logout">
+                                        <i class="zmdi zmdi-power"></i>Đăng xuất
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+</header>
+<!--END HEADER DESKTOP-->
+
+<div class="section__content section__content--p30">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-12">
+                <h1 class="title-5 m-b-35">Cập nhật thể loại</h1>
+
+                <div class="table-responsive table--no-card m-b-30">
+                    <form method="post" asp-action="UpdateCategory" enctype="multipart/form-data">
+                        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+                        <div class="form-group">
+                            <label asp-for="CategoryId" class="control-label"></label>
+                            <input asp-for="CategoryId" class="form-control" readonly />
+                            <span asp-validation-for="CategoryId" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <label asp-for="CategoryName" class="control-label"></label>
+                            <input asp-for="CategoryName" class="form-control" />
+                            <span asp-validation-for="CategoryName" class="text-danger"></span>
+                        </div>
+                       
+                        <div class="form-group">
+                            <label asp-for="Active" class="control-label"></label>
+                            <input asp-for="Active" type="checkbox" style="margin-left: 20px" />
+                            <span asp-validation-for="Active" class="text-danger"></span>
+                        </div>
+
+                        <div class="form-group">
+                            <input type="submit" value="Cập nhật" class="btn btn-success btn-sm" />
+                            <a href="/admin/category" class="btn btn-sm btn-primary">Quay lại danh sách thể loại</a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+</script>
+

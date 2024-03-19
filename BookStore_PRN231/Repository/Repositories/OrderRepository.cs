@@ -50,6 +50,17 @@ namespace Repository.Repositories
             }
         }
 
+        public List<StatusDto> GetAllStatus()
+        {
+            var statusList = _context.Status.ToList();
+            if (!statusList.Any())
+            {
+                throw new Exception("List is empty!");
+            }
+            var statusListDto = _mapper.Map<List<StatusDto>>(statusList);
+            return statusListDto;
+        }
+
         public OrderDto GetOrderById(int id)
         {
             try

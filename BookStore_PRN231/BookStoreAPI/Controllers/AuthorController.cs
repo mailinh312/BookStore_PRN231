@@ -43,7 +43,7 @@ namespace BookStoreAPI.Controllers
             }
         }
 
-        [HttpGet("Author")]
+        [HttpGet("{id}")]
         public IActionResult GetAuthorById(int id)
         {
             try

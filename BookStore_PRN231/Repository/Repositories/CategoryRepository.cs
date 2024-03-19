@@ -25,7 +25,7 @@ namespace Repository.Repositories
         {
             try
             {
-                Category category = _context.Categories.FirstOrDefault(x => x.CategoryName.ToUpper().Equals(categoryDto.CategoryName.ToUpper()));
+                Category category = _context.Categories.FirstOrDefault(x => x.CategoryName.ToUpper().Trim().Equals(categoryDto.CategoryName.ToUpper().Trim()));
                 if (category != null)
                 {
                     throw new Exception("Category existed!");
@@ -81,12 +81,14 @@ namespace Repository.Repositories
         {
             try
             {
+                
                 Category category = _context.Categories.FirstOrDefault(x => x.CategoryId == id);
 
                 if (category == null)
                 {
                     throw new Exception("Category does not exist!");
                 }
+
                 CategoryDto categoryDto = _mapper.Map<CategoryDto>(category);
                 return categoryDto;
             }
@@ -104,6 +106,12 @@ namespace Repository.Repositories
                 if (!_context.Categories.Any(x => x.CategoryId == categoryDto.CategoryId))
                 {
                     throw new Exception("Category does not exist!");
+                }
+
+                
+                if (_context.Categories.Any(x => x.CategoryName.ToUpper().Trim().Equals(categoryDto.CategoryName.ToUpper().Trim())))
+                {
+                    throw new Exception("Category name existed!");
                 }
 
                 Category category = _context.Categories.FirstOrDefault(x => x.CategoryId == categoryDto.CategoryId);

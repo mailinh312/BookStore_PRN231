@@ -17,5 +17,7 @@ namespace Repository.IRepositories
 
         void UpdateStatusOrder(int orderId, int statusId);
         int AddNewOrder(OrderCreateDto orderDto);
+
+        List<StatusDto> GetAllStatus();
     }
 }

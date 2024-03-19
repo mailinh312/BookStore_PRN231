@@ -30,7 +30,7 @@ namespace Repository.Repositories
                     throw new Exception("Book must be not null!");
                 }
 
-                Book book = _context.Books.FirstOrDefault(x => x.Title.Equals(bookDto.Title));
+                Book book = _context.Books.FirstOrDefault(x => x.Title.ToUpper().Trim().Equals(bookDto.Title.ToUpper().Trim()));
                 if (book != null)
                 {
                     throw new Exception("Book existed!");
@@ -112,7 +112,7 @@ namespace Repository.Repositories
         {
             try
             {
-                List<Book> books = _context.Books.Where(x => x.Title.ToUpper().Contains(title.ToUpper())).Include(x => x.Author).Include(x => x.Category).ToList();
+                List<Book> books = _context.Books.Where(x => x.Title.ToUpper().Trim().Contains(title.ToUpper().Trim())).Include(x => x.Author).Include(x => x.Category).ToList();
                 if (!books.Any())
                 {
                     throw new Exception("There is no book found!");
