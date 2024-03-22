@@ -13,6 +13,5 @@ namespace BusinessObjects.DTO
         public decimal? TotalPrice { get; set; }
 
         public String? UserId { get; set; }
-
     }
 }

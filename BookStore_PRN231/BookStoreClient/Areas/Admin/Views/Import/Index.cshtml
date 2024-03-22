@@ -2,19 +2,11 @@
 @using BusinessObjects.DTO;
 @using Microsoft.AspNetCore.Identity;
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-
-
+@model List<ImportDto>
 @{
     ViewData["Title"] = "Index";
     Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
 }
-
-<script>
-    function submitForm() {
-        var form = document.getElementById("cateForm");
-        form.submit();
-    }
-</script>
 
 <!-- HEADER DESKTOP-->
 
@@ -23,12 +15,11 @@
         <div class="container-fluid">
             <div class="header-wrap">
                 <form class="form-header" asp-action="Index" method="get">
-                    <input class="au-input au-input--xl" type="text" name="search" value="@ViewBag.searchString" placeholder="Tìm kiếm sản phẩm" />
+                    <input class="au-input au-input--xl" type="text" name="search" value="@ViewBag.searchString" placeholder="Nhập mã đơn nhập hàng" />
                     <button class="au-btn--submit" type="submit">
                         <i class="zmdi zmdi-search"></i>
                     </button>
                 </form>
-
 
                 <div class="header-button">
 
@@ -55,7 +46,6 @@
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
         </div>
@@ -67,32 +57,15 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-lg-12">
-                <h1 class="title-5 m-b-35">Quản lý sản phẩm</h1>
+                <h1 class="title-5 m-b-35">Quản lý nhập hàng</h1>
                 <div class="table-data__tool">
                     <div class="table-data__tool-left">
-                        <form id="cateForm" asp-action="Index" method="get">
-                            <div class="rs-select2--light rs-select2--md">
-
-                                <select class="js-select2" name="cid" asp-items="@ViewBag.categories" onchange="submitForm()">
-                                    <option value="0">Tất cả thể loại</option>
-                                </select>
-
-                                <div class="dropDownSelect2"></div>
-                            </div>
-                            <div class="rs-select2--light rs-select2--md">
-
-                                <select class="js-select2" name="aid" asp-items="@ViewBag.authors" onchange="submitForm()">
-                                    <option value="0">Tác giả</option>
-                                </select>
-
-                                <div class="dropDownSelect2"></div>
-                            </div>
-                        </form>
                     </div>
                     <div class="table-data__tool-right">
                         <button class="au-btn au-btn-icon au-btn--green au-btn--small" style="background-color: aliceblue">
-                            <a href="/admin/product/addproduct"> <i class="zmdi zmdi-plus"></i>Thêm sản phẩm</a>
+                            <a href="/admin/import/addimport"> <i class="zmdi zmdi-plus"></i>Thêm phiếu nhập</a>
                         </button>
+
                     </div>
                 </div>
                 <div class="table-responsive table--no-card m-b-30">
@@ -100,39 +73,24 @@
                         <thead>
                             <tr>
                                 <th>ID</th>
-                                <th>Hình ảnh</th>
-                                <th>Tiêu đề</th>
-                                <th>Thể loại</th>
-                                <th>Tác giả</th>
-                                <th>Nhà xuất bản</th>
-                                <th>Ngày xuất bản</th>
-                                <th class="text-right">Giá</th>
-                                <th>Số lượng trong kho</th>
-                                <th>Hoạt động</th>
-                                <th>Tùy chọn</th>
+                                <th>Người nhập hàng</th>
+                                <th>Ngày nhập hàng</th>
+                                <th>Tổng thanh toán</th>
+                                <th></th>
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var book in ViewBag.books)
+                            @foreach (var import in Model)
                             {
                                 <tr>
-                                    <td>@book.BookId</td>
-                                    <td> <img src="@book.ImageUrl" /></td>
-                                    <td>@book.Title</td>
-                                    <td>@book.CategoryName</td>
-                                    <td>@book.AuthorName</td>
-                                    <td>@book.Publisher</td>
-                                    <td>@book.PublishDate</td>
-                                    <td class="text-right">@book.Price</td>
-                                    <td>@book.StockQuantity</td>
-                                    <td>@book.Active</td>
+                                    <td>@import.ImportId</td>
+                                    <td>@import.UserName</td>
+                                    <td>@import.ImportDate</td>
+                                    <td>@import.TotalPrice</td>
                                     <td>
                                         <div class="table-data-feature">
-                                            <button class="item" data-toggle="tooltip" data-placement="top" title="Send">
-                                                <i class="zmdi zmdi-mail-send"></i>
-                                            </button>
-                                            <button class="item" data-toggle="tooltip" data-placement="top" title="Edit">
-                                                <a asp-controller="Product" asp-action="UpdateProductForm" asp-route-bookId="@book.BookId"><i class="zmdi zmdi-edit"></i></a>
+                                            <button class="item" data-toggle="tooltip" data-placement="top" title="Detail">
+                                                <a asp-action="DetailImport" asp-route-orderId="@import.ImportId"><i class="zmdi zmdi-mail-send"></i></a>
                                             </button>
                                         </div>
                                     </td>
@@ -141,10 +99,10 @@
                         </tbody>
                     </table>
                 </div>
-
             </div>
         </div>
     </div>
 </div>
+
 
 

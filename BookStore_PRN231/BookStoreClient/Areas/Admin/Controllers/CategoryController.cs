@@ -1,6 +1,8 @@
 ﻿using BookStoreClient.ShareApiService;
 using BusinessObjects.DTO;
 using Microsoft.AspNetCore.Mvc;
+using Repository.Helpers;
+using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
 using System.Text.Json;
 
@@ -11,12 +13,29 @@ namespace BookStoreClient.Areas.Admin.Controllers
     public class CategoryController : Controller
     {
         private readonly CategoryApiService categoryApiService;
-        public CategoryController()
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        public CategoryController(IHttpContextAccessor httpContextAccessor)
         {
-          categoryApiService = new CategoryApiService();
+            categoryApiService = new CategoryApiService();
+            _httpContextAccessor = httpContextAccessor;
         }
         public async Task<IActionResult> Index()
         {
+            string token = _httpContextAccessor.HttpContext.Session.Get<String>("token");
+
+            if (string.IsNullOrEmpty(token)) // Kiểm tra chuỗi token có rỗng hoặc null không
+            {
+                Console.WriteLine("Chuỗi token không được để trống hoặc null.");
+                return null;
+            }
+            //// Giải mã token
+            var handler = new JwtSecurityTokenHandler();
+            var jwtToken = handler.ReadJwtToken(token);
+
+            // Trích xuất tên người dùng từ payload
+            var username = jwtToken.Payload["username"]?.ToString();
+            ViewBag.UserName = username;
+
             List<CategoryDto> listCate = await categoryApiService.GetCategories();
             return View(listCate);
         }

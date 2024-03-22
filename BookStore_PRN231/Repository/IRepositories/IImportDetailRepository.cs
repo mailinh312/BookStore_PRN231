@@ -10,6 +10,6 @@ namespace Repository.IRepositories
     public interface IImportDetailRepository
     {
         List<ImportDetailDto> GetImportDetailsByImportId(int id);
-        void AddNewImportDetail(ImportDetailCreateDto importDetail);
+        void AddNewImportDetail(int importId, ImportDetailCreateDto importDetail);
     }
 }

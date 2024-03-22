@@ -107,25 +107,33 @@ namespace Repository.Repositories
                 return string.Empty;
             }
             // định nghĩa ra các claim cho user
-            var authClaims = new List<Claim> {
-            new Claim(ClaimTypes.Name, user.UserName),
-            new Claim(ClaimTypes.Email, user.Email),
-            new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
-        };
-            var userRoles = await _userManager.GetRolesAsync(user);
-            foreach (var role in userRoles)
+            var authClaims = new List<Claim>
             {
-                authClaims.Add(new Claim(ClaimTypes.Role, role.ToString()));
+                new Claim("username", user.UserName),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
+            };
+
+            var userRoles = await _userManager.GetRolesAsync(user);
+            foreach (var userRole in userRoles)
+            {
+                authClaims.Add(new Claim("role", userRole));
             }
-            var authenKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:SecretKey"]));
-            var token = new JwtSecurityToken(
-                    issuer: _configuration["JWT:ValidIssuer"],
-                    audience: _configuration["JWT:ValidAudience"],
-                    expires: DateTime.Now.AddMinutes(20),
-                    claims: authClaims,
-                    signingCredentials: new SigningCredentials(authenKey, SecurityAlgorithms.HmacSha256)
-            );
+            var token = GetToken(authClaims);
+
             return new JwtSecurityTokenHandler().WriteToken(token);
+        }
+
+        private JwtSecurityToken GetToken(List<Claim> authClaims)
+        {
+            var authSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["JWT:SecretKey"]));
+
+            var token = new JwtSecurityToken(
+                expires: DateTime.Now.AddHours(3),
+                claims: authClaims,
+                signingCredentials: new SigningCredentials(authSigningKey, SecurityAlgorithms.HmacSha256)
+            );
+
+            return token;
         }
 
 

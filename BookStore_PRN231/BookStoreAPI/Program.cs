@@ -126,11 +126,8 @@ namespace BookStoreAPI
                 options.TokenValidationParameters = new TokenValidationParameters()
                 {
                     // tham số bên dưới
-                    ValidateIssuer = true,
-                    ValidateAudience = true,
-                    // nếu được có thể tham số hóa trong appsetting
-                    ValidIssuer = builder.Configuration["Jwt:ValidIssuer"], // đường dẫn host
-                    ValidAudience = builder.Configuration["Jwt:ValidAudience"],
+                    ValidateIssuer = false,
+                    ValidateAudience = false,
                     // quantrong
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["Jwt:SecretKey"]))
                 };

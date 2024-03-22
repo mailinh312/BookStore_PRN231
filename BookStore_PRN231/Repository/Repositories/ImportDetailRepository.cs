@@ -21,11 +21,18 @@ namespace Repository.Repositories
             _context = context;
             _mapper = mapper;
         }
-        public void AddNewImportDetail(ImportDetailCreateDto importDetailDto)
+        public void AddNewImportDetail(int importId, ImportDetailCreateDto importDetailDto)
         {
             try
             {
+                Import import = _context.Imports.Find(importId);
+                if (import == null)
+                {
+                    throw new Exception("Import does not exist!");
+                }
+                
                 ImportDetail imporDetail = _mapper.Map<ImportDetail>(importDetailDto);
+                imporDetail.ImportId = importId;
 
                 _context.ImportDetails.Add(imporDetail);
                 _context.SaveChanges();

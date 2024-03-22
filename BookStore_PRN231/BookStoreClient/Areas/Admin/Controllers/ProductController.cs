@@ -4,6 +4,8 @@ using BusinessObjects.Models;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
+using Repository.Helpers;
+using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Security;
@@ -22,19 +24,37 @@ namespace BookStoreClient.Areas.Admin.Controllers
         private readonly CategoryApiService categoryApiService;
         private readonly AuthorApiService authorApiService;
         private readonly IWebHostEnvironment _environment;
+        private readonly IHttpContextAccessor _httpContextAccessor;
         public int? selectCid;
         public int? selectAid;
-        public ProductController(IWebHostEnvironment environment)
+        public ProductController(IWebHostEnvironment environment, IHttpContextAccessor httpContextAccessor)
         {
             productApiService = new ProductApiService();
             categoryApiService = new CategoryApiService();
             authorApiService = new AuthorApiService();
             _environment = environment;
+            _httpContextAccessor = httpContextAccessor;
         }
 
 
         public async Task<IActionResult> Index(int? cid, int? aid, string? search)
         {
+
+            string token = _httpContextAccessor.HttpContext.Session.Get<String>("token");
+
+            if (string.IsNullOrEmpty(token)) // Kiểm tra chuỗi token có rỗng hoặc null không
+            {
+                Console.WriteLine("Chuỗi token không được để trống hoặc null.");
+                return null;
+            }
+            //// Giải mã token
+            var handler = new JwtSecurityTokenHandler();
+            var jwtToken = handler.ReadJwtToken(token);
+
+            // Trích xuất tên người dùng từ payload
+            var username = jwtToken.Payload["username"]?.ToString();
+            ViewBag.UserName = username;
+
 
             List<CategoryDto> categories = await categoryApiService.GetCategories();
             List<AuthorDto> authors = await authorApiService.GetAuthors();

@@ -47,12 +47,7 @@ namespace BookStoreAPI.Controllers
             {
                 return Unauthorized(new { Success = false, Message = "Invalid username or password." });
             }
-            return Ok(new
-            {
-                Success = true,
-                Token = result,
-                Message = "Login successful."
-            });
+            return Ok(result);
         }
 
         [HttpGet("AllUsers")]

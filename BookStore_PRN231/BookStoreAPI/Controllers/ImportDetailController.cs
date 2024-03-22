@@ -16,7 +16,7 @@ namespace BookStoreAPI.Controllers
         }
 
         [HttpGet("Import")]
-        public IActionResult GetImportByImportId(int id)
+        public IActionResult GetImportDetailsByImportId(int id)
         {
             try
             {
@@ -28,12 +28,12 @@ namespace BookStoreAPI.Controllers
             }
         }
 
-        [HttpPost("Create")]
-        public IActionResult AddNewImport(ImportDetailCreateDto importDetailCreateDto)
+        [HttpPost("Create/importId={importId}")]
+        public IActionResult AddNewImportDetail(int importId, ImportDetailCreateDto importDetailCreateDto)
         {
             try
             {
-                _repository.AddNewImportDetail(importDetailCreateDto);
+                _repository.AddNewImportDetail(importId, importDetailCreateDto);
                 return Ok(); 
             }
             catch (Exception ex)

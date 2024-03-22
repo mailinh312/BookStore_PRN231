@@ -1,6 +1,14 @@
 ﻿using BookStoreClient.ShareApiService;
 using BusinessObjects.DTO;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
+using NuGet.Common;
+using Repository.Helpers;
+using System.IdentityModel.Tokens.Jwt;
+using System.Net.Mail;
+using System.Security.Claims;
+using System.Text;
 
 namespace BookStoreClient.Areas.Admin.Controllers
 {
@@ -9,12 +17,32 @@ namespace BookStoreClient.Areas.Admin.Controllers
     public class OrderController : Controller
     {
         private readonly OrderApiService orderApiService;
-        public OrderController()
+        private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IConfiguration _configuration;
+        public OrderController(IHttpContextAccessor httpContextAccessor, IConfiguration configuration)
         {
             orderApiService = new OrderApiService();
+            _httpContextAccessor = httpContextAccessor;
+            _configuration = configuration;
         }
         public async Task<IActionResult> Index(string? search)
         {
+
+            string token = _httpContextAccessor.HttpContext.Session.Get<String>("token");
+
+            if (string.IsNullOrEmpty(token)) // Kiểm tra chuỗi token có rỗng hoặc null không
+            {
+                Console.WriteLine("Chuỗi token không được để trống hoặc null.");
+                return null;
+            }
+            //// Giải mã token
+            var handler = new JwtSecurityTokenHandler();
+            var jwtToken = handler.ReadJwtToken(token);
+
+            // Trích xuất tên người dùng từ payload
+            var username = jwtToken.Payload["username"]?.ToString();
+            ViewBag.UserName = username;
+
             List<StatusDto> status = await orderApiService.GetAllStatus();
             List<OrderDto> orders = await orderApiService.GetOrders();
             if (search != null)
