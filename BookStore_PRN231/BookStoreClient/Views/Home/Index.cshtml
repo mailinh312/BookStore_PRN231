@@ -22,7 +22,7 @@
 				<div class="col-lg-4 col-md-6 text-center strawberry">
 					<div class="single-product-item">
 						<div class="product-image">
-							<a asp-action="ProductDetail" asp-route-id="@book.BookId"><img src="@book.ImageUrl" style="width: 250px; height: 300px"></a>
+							<a asp-action="Index" asp-controller="ProductDetail" asp-route-productId="@book.BookId"><img src="@book.ImageUrl" style="width: 250px; height: 300px"></a>
 						</div>
 						<h6>@book.Title</h6>
 						<h6 class="product-price"> @book.Price VND</h6>

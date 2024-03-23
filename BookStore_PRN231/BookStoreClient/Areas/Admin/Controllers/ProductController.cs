@@ -40,7 +40,7 @@ namespace BookStoreClient.Areas.Admin.Controllers
 
         public async Task<IActionResult> Index(int? cid, int? aid, string? search)
         {
-
+            
             ViewBag.UserName = getUserNameByToken();
 
             List<CategoryDto> categories = await categoryApiService.GetCategories();

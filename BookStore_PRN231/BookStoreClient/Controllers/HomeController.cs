@@ -85,7 +85,7 @@ namespace BookStoreClient.Controllers
 			return RedirectToAction("Register");
 		}
 
-		public IActionResult Privacy()
+        public IActionResult Privacy()
 		{
 			return View();
 		}
@@ -137,6 +137,7 @@ namespace BookStoreClient.Controllers
 				cart.TotalPrice = UpdateTotalPrice(cart.Items);
 
 				_httpContextAccessor.HttpContext.Session.Set("Cart", cart);
+
 				return RedirectToAction("Index");
 			}
 			catch (Exception ex)

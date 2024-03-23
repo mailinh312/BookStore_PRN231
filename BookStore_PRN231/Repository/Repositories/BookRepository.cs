@@ -2,6 +2,7 @@
 using BusinessObjects.DTO;
 using BusinessObjects.Models;
 using Microsoft.EntityFrameworkCore;
+using Repository.Helpers;
 using Repository.IRepositories;
 using System;
 using System.Collections.Generic;
@@ -15,6 +16,7 @@ namespace Repository.Repositories
     {
         private readonly BookStoreDbContext _context;
         private readonly IMapper _mapper;
+        public static int PAGE_SIZE = 12;
         public BookRepository(BookStoreDbContext context, IMapper mapper)
         {
             _context = context;
@@ -62,7 +64,8 @@ namespace Repository.Repositories
                     throw new Exception("List book is empty!");
                 }
                 List<BookDto> bookDTOs = _mapper.Map<List<BookDto>>(books);
-
+               
+                
                 return bookDTOs;
             }
             catch (Exception ex)
