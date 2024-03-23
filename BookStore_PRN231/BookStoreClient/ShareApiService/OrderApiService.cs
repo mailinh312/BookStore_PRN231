@@ -31,13 +31,33 @@ namespace BookStoreClient.ShareApiService
             return orders;
         }
 
+        public async Task<int> CreateOrder(OrderCreateDto model)
+        {
+
+            var jsonContent = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json");
+
+            HttpResponseMessage response = await client.PostAsync(ApiUrl + "/Order/Create", jsonContent);
+            string strJson = await response.Content.ReadAsStringAsync();
+
+            dynamic responseObject = JsonConvert.DeserializeObject<dynamic>(strJson);
+            int orderId = Convert.ToInt32(responseObject);
+            return orderId;
+        }
+
+        public async Task CreateOrderDetail(int orderId, OrderDetailCreateDto model)
+        {
+            var jsonContent = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json");
+
+            HttpResponseMessage response = await client.PostAsync(ApiUrl + "/OrderDetail/Create?orderId=" + orderId, jsonContent);
+        }
+
         public async Task<HttpResponseMessage> UpdateOrderStatus(int orderId, int statusId)
         {
             var requestData = new
             {
                 statusId = statusId,
                 orderId = orderId
-                
+
             };
             var jsonContent = new StringContent(JsonConvert.SerializeObject(requestData), Encoding.UTF8, "application/json");
 
@@ -47,7 +67,7 @@ namespace BookStoreClient.ShareApiService
 
         public async Task<List<OrderDetailDto>> GetOrderDetailByOrderId(int orderId)
         {
-            HttpResponseMessage response = await client.GetAsync(ApiUrl + "/OrderDetail/OrderId?id=" +orderId);
+            HttpResponseMessage response = await client.GetAsync(ApiUrl + "/OrderDetail/OrderId?id=" + orderId);
             string strdetail = await response.Content.ReadAsStringAsync();
 
 

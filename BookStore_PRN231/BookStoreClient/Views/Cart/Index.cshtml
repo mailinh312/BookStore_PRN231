@@ -1,0 +1,153 @@
+﻿@using BusinessObjects.DTO;
+@model Cart
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<!-- cart -->
+<div class="cart-section mt-150 mb-150">
+    <div class="container">
+        <div class="row">
+
+            <div class="col-lg-8 col-md-12">
+
+                <div class="cart-table-wrap">
+                    <form method="post">
+                        @if (Model != null)
+                        {
+                            <table class="cart-table">
+                                <thead class="cart-table-head">
+                                    <tr class="table-head-row">
+                                        <th class="product-remove"></th>
+                                        <th class="product-image">Product Image</th>
+                                        <th class="product-name">Title</th>
+                                        <th class="product-price">Price</th>
+                                        <th class="product-quantity">Quantity</th>
+                                        <th class="product-total">Total</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    @foreach (var item in Model.Items)
+                                    {
+
+                                        <tr class="table-body-row">
+                                            <td class="product-remove"><a asp-action="DeleteItem" asp-route-bookId="@item.BookId"><i class="far fa-window-close"></i></a></td>
+                                            <td class="product-image"><img src="@item.ImageUrl" alt=""></td>
+                                            <td class="product-name">@item.BookTitle</td>
+                                            <td class="product-price">@item.BookPrice</td>
+                                            <td class="product-quantity">
+                                                <input type="number" min="1" max="@item.StockQuantity" value="@item.Quantity" name="quantities" oninput="updateQuantity(@item.BookId, this)">
+                                            </td>
+                                            <td class="product-total" id="total-price-item-@item.BookId">@(item.BookPrice * item.Quantity)</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+
+                        }
+                        else
+                        {
+                            <p><strong>Không có sản phẩm nào trong giỏ hàng</strong></p>
+                        }
+                    </form>
+                </div>
+                <br /><br />
+                <p><strong><a href="Home/Index">Tiếp tục mua sắm</a> </strong></p>
+
+
+            </div>
+
+            <div class="col-lg-4">
+                <div class="total-section">
+                    <table class="total-table">
+                        <thead class="total-table-head">
+                            <tr class="table-total-row">
+                                <th>Total</th>
+                                <th>Price</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+
+                            <tr class="total-data">
+                                <td><strong>Total: </strong></td>
+                                <td id="total-price">@Model.TotalPrice</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div class="cart-buttons">
+                        <a asp-action="CheckOut" class="boxed-btn black">Thanh toán</a>
+                    </div>
+                </div>
+                <div class="coupon-section">
+                    <div class="coupon-form-wrap">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- end cart -->
+
+<style>
+    /* CSS cho button */
+    .myButton {
+        display: inline-block;
+        padding: 10px 20px;
+        font-size: 16px;
+        text-align: center;
+        text-decoration: none;
+        cursor: pointer;
+        outline: none;
+        background-color: #F28123; /* Màu nền */
+        color: #fff; /* Màu chữ */
+        border: 1px solid #F28123; /* Đường viền */
+        border-radius: 5px; /* Độ bo tròn góc */
+        transition: background-color 0.3s; /* Hiệu ứng chuyển động màu nền */
+    }
+
+        /* CSS hover cho button */
+        .myButton:hover {
+            background-color: #212529; /* Màu nền khi hover */
+            color: #fff; /* Màu chữ khi hover */
+        }
+</style>
+<script>
+    function updateQuantity(bookId, inputElement) {
+        var newQuantity = inputElement.value;
+        $.ajax({
+            type: "POST",
+            url: "/Cart/UpdateQuantityItem",
+            data: {
+                bookId: bookId,
+                newQuantity: newQuantity
+            },
+            success: function (response) {
+                // Nếu cập nhật thành công, gọi hàm để cập nhật lại giỏ hàng và tổng giá
+                refreshCart(bookId);
+            },
+            error: function (xhr, status, error) {
+                // Xử lý lỗi nếu có
+            }
+        });
+    }
+
+    function refreshCart(bookId) {
+        $.ajax({
+            type: "GET",
+            url: "/Cart/Index",
+            success: function (response) {
+                
+                // Cập nhật lại tổng giá trị
+                var totalPrice = parseFloat($(response).find(".total-data td:last-child").text());
+                $("#total-price").text(totalPrice.toFixed(2));
+                var totalPriceItem = parseFloat($(response).find(".table-body-row td:last-child").text());
+                $("#total-price-item-" + bookId).text(totalPriceItem.toFixed(2));
+            },
+            error: function (xhr, status, error) {
+                // Xử lý lỗi nếu có
+            }
+        });
+    }
+
+</script>
+

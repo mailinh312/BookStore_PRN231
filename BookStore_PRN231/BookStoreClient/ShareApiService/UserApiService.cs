@@ -32,6 +32,19 @@ namespace BookStoreClient.ShareApiService
             return users;
         }
 
+        public async Task<List<UserDto>> GetUserByName(string name)
+        {
+            HttpResponseMessage response = await client.GetAsync(ApiUrl + "/AppUser/Username/" + name);
+            string strUser = await response.Content.ReadAsStringAsync();
+
+
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true,
+            };
+            List<UserDto> users = System.Text.Json.JsonSerializer.Deserialize<List<UserDto>>(strUser, options);
+            return users;
+        }
         public async Task<HttpResponseMessage> Login(LoginDTO model)
         {
             var jsonContent = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json");
@@ -45,6 +58,41 @@ namespace BookStoreClient.ShareApiService
             var jsonContent = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json");
 
             HttpResponseMessage response = await client.PostAsync(ApiUrl + "/AppUser/Register", jsonContent);
+            return response;
+        }
+
+        public async Task<List<string>> GetAllRoles()
+        {
+            HttpResponseMessage response = await client.GetAsync(ApiUrl + "/Role/AllRoles");
+            string strRole = await response.Content.ReadAsStringAsync();
+
+
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true,
+            };
+            List<string> roles = System.Text.Json.JsonSerializer.Deserialize<List<string>>(strRole, options);
+            return roles;
+        }
+
+        public async Task<List<string>> GetAllRolesByUsername(string username)
+        {
+            HttpResponseMessage response = await client.GetAsync(ApiUrl + "/Role/Username/"+username);
+            string strRole = await response.Content.ReadAsStringAsync();
+
+
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true,
+            };
+            List<string> roles = System.Text.Json.JsonSerializer.Deserialize<List<string>>(strRole, options);
+            return roles;
+        }
+        public async Task<HttpResponseMessage> UpdateRoleUser(List<string> roles, string username)
+        {
+            var jsonContent = new StringContent(JsonConvert.SerializeObject(roles), Encoding.UTF8, "application/json");
+
+            HttpResponseMessage response = await client.PutAsync(ApiUrl + "/AppUser?username=" + username, jsonContent);
             return response;
         }
     }

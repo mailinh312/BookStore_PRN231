@@ -1,5 +1,7 @@
 ﻿using BookStoreClient.ShareApiService;
 using BusinessObjects.DTO;
+using BusinessObjects.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Repository.Helpers;
 using System.IdentityModel.Tokens.Jwt;
@@ -13,16 +15,90 @@ namespace BookStoreClient.Areas.Admin.Controllers
         private readonly ImportApiService importApiService;
         private readonly ProductApiService productApiService;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        public static List<ImportDetailCreateDto> ImportDetailList { get; set; }
+        private readonly UserApiService userApiService;
+        public static List<ImportDetailCreateDto> ImportDetailList = new List<ImportDetailCreateDto>();
 
         public ImportController(IHttpContextAccessor httpContextAccessor)
         {
             importApiService = new ImportApiService();
             productApiService = new ProductApiService();
             _httpContextAccessor = httpContextAccessor;
-            ImportDetailList = new List<ImportDetailCreateDto>();
+            userApiService = new UserApiService();
         }
         public async Task<IActionResult> Index()
+        {
+
+            ViewBag.UserName = getUserNameByToken();
+
+            List<ImportDto> list = (await importApiService.GetImports()) != null? (await importApiService.GetImports()) : new List<ImportDto>();
+            return View(list);
+        }
+
+        [HttpGet("viewdetail")]
+        public async Task<IActionResult> ViewDetailImport(int importId)
+        {
+            List<ImportDetailDto> importDetailDtos = await importApiService.GetImportDetailByImportId(importId);
+
+            ViewBag.UserName = getUserNameByToken();
+            return View(importDetailDtos);
+        }
+
+        [HttpGet("addimport")]
+        public async Task<IActionResult> AddImportForm()
+        {
+            return View(ImportDetailList);
+        }
+
+        [HttpPost("addimport")]
+        public async Task<IActionResult> AddImport()
+        {
+            
+            string username = getUserNameByToken();
+            UserDto user = (await userApiService.GetUserByName(username)).FirstOrDefault();
+            ImportCreateDto import = new ImportCreateDto();
+            decimal? totalPrice = 0;
+            if(user != null)
+            {
+                import.UserId = user.Id;
+            }
+
+            foreach(var detail in ImportDetailList)
+            {
+                totalPrice += detail.Quantity * detail.InputPrice;
+            }
+            import.TotalPrice = totalPrice;
+            int importId = await importApiService.AddImport(import);
+
+
+                foreach (var detail in ImportDetailList)
+                {
+                   await importApiService.AddImportDetail(importId, detail);
+                }
+
+            ImportDetailList.Clear();
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet("addimportdetailform")]
+        public async Task<IActionResult> AddImportDetailForm()
+        {
+            List<BookDto> books = await productApiService.GetBooks();
+            ViewBag.Books = books;
+            ViewBag.UserName = getUserNameByToken();
+            return View();
+        }
+
+        [HttpPost("addimportdetailform")]
+        public IActionResult AddImportDetail(ImportDetailCreateDto model)
+        {
+            if (ModelState.IsValid)
+            {
+                ImportDetailList.Add(model);
+            }
+            return RedirectToAction("AddImportForm");
+        }
+
+        private string getUserNameByToken()
         {
             string token = _httpContextAccessor.HttpContext.Session.Get<String>("token");
             var username = "";
@@ -39,35 +115,7 @@ namespace BookStoreClient.Areas.Admin.Controllers
                 // Trích xuất tên người dùng từ payload
                 username = jwtToken.Payload["username"]?.ToString();
             }
-            
-            ViewBag.UserName = username;
-
-            List<ImportDto> list = (await importApiService.GetImports()) != null? (await importApiService.GetImports()) : new List<ImportDto>();
-            return View(list);
-        }
-
-        [HttpGet("addimport")]
-        public async Task<IActionResult> AddImportForm()
-        {
-            return View(ImportDetailList);
-        }
-
-        [HttpGet("addimportdetailform")]
-        public async Task<IActionResult> AddImportDetailForm()
-        {
-            List<BookDto> books = await productApiService.GetBooks();
-            ViewBag.Books = books;
-            return View();
-        }
-
-        [HttpPost("addimportdetailform")]
-        public IActionResult AddImportDetail(ImportDetailCreateDto model)
-        {
-            if (ModelState.IsValid)
-            {
-                ImportDetailList.Add(model);
-            }
-            return RedirectToAction("AddImportForm");
+            return username;
         }
     }
 }

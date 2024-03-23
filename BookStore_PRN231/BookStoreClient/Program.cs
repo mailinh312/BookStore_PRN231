@@ -22,6 +22,7 @@ namespace BookStoreClient
                 options.Cookie.HttpOnly = true;
             });
 
+
             //Add Jwt Token Functionality
             // Add Authencation
             builder.Services.AddAuthentication(options =>

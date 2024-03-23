@@ -76,12 +76,26 @@ namespace BookStoreAPI.Controllers
             }
         }
 
-        [HttpGet("Username")]
+        [HttpGet("Username/{name}")]
         public async Task<IActionResult> GetUsersByUserName(string name)
         {
             try
             {
                 return Ok(await _repository.GetUsersByUserName(name));
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> UpdateRoleuser(List<String> roles, string username)
+        {
+            try
+            {
+                await _repository.UpdateRole(roles, username);
+                return Ok();
             }
             catch (Exception ex)
             {

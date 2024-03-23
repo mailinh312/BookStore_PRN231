@@ -31,22 +31,38 @@ namespace BookStoreClient.ShareApiService
             List<ImportDto> imports = System.Text.Json.JsonSerializer.Deserialize<List<ImportDto>>(strImport, options);
             return imports;
         }
-        public async Task<HttpResponseMessage> AddImport(ImportCreateDto model)
+
+        public async Task<List<ImportDetailDto>> GetImportDetailByImportId(int importId)
         {
-            
+            HttpResponseMessage response = await client.GetAsync(ApiUrl + "/ImportDetail/Import?id="+importId);
+            string strImport = await response.Content.ReadAsStringAsync();
+
+
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true,
+            };
+            List<ImportDetailDto> importDetails = System.Text.Json.JsonSerializer.Deserialize<List<ImportDetailDto>>(strImport, options);
+            return importDetails;
+        }
+        public async Task<int> AddImport(ImportCreateDto model)
+        {
+
             var jsonContent = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json");
 
             HttpResponseMessage response = await client.PostAsync(ApiUrl + "/Import/Create", jsonContent);
-            return response;
+            string strJson = await response.Content.ReadAsStringAsync();
+
+            dynamic responseObject = JsonConvert.DeserializeObject<dynamic>(strJson);
+            int importId = Convert.ToInt32(responseObject);
+            return importId;
         }
 
-        public async Task<HttpResponseMessage> AddImportDetail(int importId, ImportDetailCreateDto model)
+        public async Task AddImportDetail(int importId, ImportDetailCreateDto model)
         {
 
             var jsonContent = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json");
-
-            HttpResponseMessage response = await client.PostAsync(ApiUrl + "/ImportDetail/Create/importId="+importId, jsonContent);
-            return response;
+            await client.PostAsync(ApiUrl + "/ImportDetail/Create/importId=" + importId, jsonContent);
         }
     }
 }

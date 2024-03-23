@@ -12,8 +12,11 @@ namespace BusinessObjects.DTO
         public int? BookId { get; set; }
 
         public string BookTitle {  get; set; }
-        public decimal BookPrice { get; set; }
 
+        public string ImageUrl { get; set; }
+        public decimal? BookPrice { get; set; }
+        
+        public int? StockQuantity {  get; set; }
         public int? Quantity { get; set; }
     }
 }

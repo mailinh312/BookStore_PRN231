@@ -21,20 +21,8 @@ namespace BookStoreClient.Areas.Admin.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            string token = _httpContextAccessor.HttpContext.Session.Get<String>("token");
-
-            if (string.IsNullOrEmpty(token)) // Kiểm tra chuỗi token có rỗng hoặc null không
-            {
-                Console.WriteLine("Chuỗi token không được để trống hoặc null.");
-                return null;
-            }
-            //// Giải mã token
-            var handler = new JwtSecurityTokenHandler();
-            var jwtToken = handler.ReadJwtToken(token);
-
-            // Trích xuất tên người dùng từ payload
-            var username = jwtToken.Payload["username"]?.ToString();
-            ViewBag.UserName = username;
+            
+            ViewBag.UserName = getUserNameByToken();
 
             List<CategoryDto> listCate = await categoryApiService.GetCategories();
             return View(listCate);
@@ -43,6 +31,7 @@ namespace BookStoreClient.Areas.Admin.Controllers
         [HttpGet("addcategory")]
         public async Task<IActionResult> AddCategoryForm()
         {
+            ViewBag.UserName = getUserNameByToken();
             return View();
         }
 
@@ -80,6 +69,7 @@ namespace BookStoreClient.Areas.Admin.Controllers
         public async Task<IActionResult> UpdateCategoryForm(int categoryId)
         {
             CategoryDto model = await categoryApiService.GetCategoryById(categoryId);
+            ViewBag.UserName = getUserNameByToken();
             return View(model);
         }
 
@@ -112,6 +102,26 @@ namespace BookStoreClient.Areas.Admin.Controllers
                 }
             }
             return RedirectToAction("UpdateCategoryForm");
+        }
+
+        private string getUserNameByToken()
+        {
+            string token = _httpContextAccessor.HttpContext.Session.Get<String>("token");
+            var username = "";
+            if (string.IsNullOrEmpty(token)) // Kiểm tra chuỗi token có rỗng hoặc null không
+            {
+                Console.WriteLine("Chuỗi token không được để trống hoặc null.");
+                token = "";
+            }
+            else
+            {
+                var handler = new JwtSecurityTokenHandler();
+                var jwtToken = handler.ReadJwtToken(token);
+
+                // Trích xuất tên người dùng từ payload
+                username = jwtToken.Payload["username"]?.ToString();
+            }
+            return username;
         }
     }
 }

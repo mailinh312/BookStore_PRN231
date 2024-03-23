@@ -19,5 +19,6 @@ namespace Repository.IRepositories
         Task<List<UserDto>> GetUsersByUserName(string name);
 
         Task<UserDto> GetUserById(string id);
+        Task UpdateRole(List<String> roles, string username);
     }
 }

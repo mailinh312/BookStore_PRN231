@@ -2,6 +2,8 @@
 using BusinessObjects.DTO;
 using BusinessObjects.Models;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Repository.IRepositories;
@@ -171,6 +173,24 @@ namespace Repository.Repositories
             }
 
             return result;
+        }
+
+        public async Task UpdateRole(List<String> roles, string username)
+        {
+            var user = await _userManager.FindByNameAsync(username);
+            var oldRoleNames = (await _userManager.GetRolesAsync(user)).ToArray();
+            // so sánh giữa role cũ và role mới chọn 
+
+            // nếu có trong role cũ mà ko có trong role mới vừa chọn -> thì đấy là những cái role cần phải xóa
+            var deleteRoles = oldRoleNames.Where(x => !roles.Contains(x));
+            // những cái role có ở trong list role mới nhưng ko có trong role cũ -> thì đấy là những cái role cần thêm vào
+            var addRoles = roles.Where(x => !oldRoleNames.Contains(x));
+
+            //delete role thừa
+            var rsDelete = await _userManager.RemoveFromRolesAsync(user, deleteRoles);
+
+            //thêm một mảng các role cho user
+            var rsAdd = await _userManager.AddToRolesAsync(user, addRoles);
         }
     }
 }

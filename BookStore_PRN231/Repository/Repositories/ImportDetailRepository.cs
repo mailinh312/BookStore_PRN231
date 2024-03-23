@@ -33,8 +33,14 @@ namespace Repository.Repositories
                 
                 ImportDetail imporDetail = _mapper.Map<ImportDetail>(importDetailDto);
                 imporDetail.ImportId = importId;
+                imporDetail.TotalPrice = importDetailDto.Quantity * importDetailDto.InputPrice;
 
                 _context.ImportDetails.Add(imporDetail);
+
+                Book book = _context.Books.Find(importDetailDto.BookId);
+                book.OriginPrice = importDetailDto.InputPrice;
+                book.Price = importDetailDto.OutputPrice;
+                _context.Books.Update(book);
                 _context.SaveChanges();
 
             }

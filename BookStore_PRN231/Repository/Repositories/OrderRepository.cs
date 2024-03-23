@@ -26,6 +26,7 @@ namespace Repository.Repositories
         {
             Order order = _mapper.Map<Order>(orderDto);
             order.OrderDate = DateTime.Now;
+            order.StatusId = 1;
             _context.Orders.Add(order);
             _context.SaveChanges();
             return order.OrderId;

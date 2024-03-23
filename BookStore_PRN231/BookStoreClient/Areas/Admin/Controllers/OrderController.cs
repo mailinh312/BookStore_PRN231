@@ -27,21 +27,7 @@ namespace BookStoreClient.Areas.Admin.Controllers
         }
         public async Task<IActionResult> Index(string? search)
         {
-
-            string token = _httpContextAccessor.HttpContext.Session.Get<String>("token");
-
-            if (string.IsNullOrEmpty(token)) // Kiểm tra chuỗi token có rỗng hoặc null không
-            {
-                Console.WriteLine("Chuỗi token không được để trống hoặc null.");
-                return null;
-            }
-            //// Giải mã token
-            var handler = new JwtSecurityTokenHandler();
-            var jwtToken = handler.ReadJwtToken(token);
-
-            // Trích xuất tên người dùng từ payload
-            var username = jwtToken.Payload["username"]?.ToString();
-            ViewBag.UserName = username;
+            ViewBag.UserName = getUserNameByToken();
 
             List<StatusDto> status = await orderApiService.GetAllStatus();
             List<OrderDto> orders = await orderApiService.GetOrders();
@@ -68,6 +54,7 @@ namespace BookStoreClient.Areas.Admin.Controllers
         public async Task<IActionResult> DetailOrder(int orderId)
         {
             List<OrderDetailDto> orderDetailDtos = await orderApiService.GetOrderDetailByOrderId(orderId);
+            ViewBag.UserName = getUserNameByToken();
             return View(orderDetailDtos);
         }
 
@@ -95,6 +82,25 @@ namespace BookStoreClient.Areas.Admin.Controllers
                 TempData["ErrorMessage"] = $"Đã xảy ra lỗi: {ex.Message}";
             }
             return RedirectToAction("Index");
+        }
+        private string getUserNameByToken()
+        {
+            string token = _httpContextAccessor.HttpContext.Session.Get<String>("token");
+            var username = "";
+            if (string.IsNullOrEmpty(token)) // Kiểm tra chuỗi token có rỗng hoặc null không
+            {
+                Console.WriteLine("Chuỗi token không được để trống hoặc null.");
+                token = "";
+            }
+            else
+            {
+                var handler = new JwtSecurityTokenHandler();
+                var jwtToken = handler.ReadJwtToken(token);
+
+                // Trích xuất tên người dùng từ payload
+                username = jwtToken.Payload["username"]?.ToString();
+            }
+            return username;
         }
     }
 }

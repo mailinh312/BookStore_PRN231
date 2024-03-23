@@ -1,6 +1,7 @@
 ﻿using BookStoreClient.ShareApiService;
 using BusinessObjects.DTO;
 using BusinessObjects.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
@@ -17,6 +18,7 @@ namespace BookStoreClient.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [Route("admin/product")]
+    
     public class ProductController : Controller
     {
 
@@ -36,25 +38,10 @@ namespace BookStoreClient.Areas.Admin.Controllers
             _httpContextAccessor = httpContextAccessor;
         }
 
-
         public async Task<IActionResult> Index(int? cid, int? aid, string? search)
         {
 
-            string token = _httpContextAccessor.HttpContext.Session.Get<String>("token");
-
-            if (string.IsNullOrEmpty(token)) // Kiểm tra chuỗi token có rỗng hoặc null không
-            {
-                Console.WriteLine("Chuỗi token không được để trống hoặc null.");
-                return null;
-            }
-            //// Giải mã token
-            var handler = new JwtSecurityTokenHandler();
-            var jwtToken = handler.ReadJwtToken(token);
-
-            // Trích xuất tên người dùng từ payload
-            var username = jwtToken.Payload["username"]?.ToString();
-            ViewBag.UserName = username;
-
+            ViewBag.UserName = getUserNameByToken();
 
             List<CategoryDto> categories = await categoryApiService.GetCategories();
             List<AuthorDto> authors = await authorApiService.GetAuthors();
@@ -99,6 +86,7 @@ namespace BookStoreClient.Areas.Admin.Controllers
             BookCreateDto book = new BookCreateDto();
             ViewBag.categories = new SelectList(categories, "CategoryId", "CategoryName", selectCid);
             ViewBag.authors = new SelectList(authors, "AuthorId", "AuthorName", selectAid);
+            ViewBag.UserName = getUserNameByToken();
             return View(book);
         }
 
@@ -160,6 +148,7 @@ namespace BookStoreClient.Areas.Admin.Controllers
             selectAid = book.AuthorId;
             ViewBag.categories = new SelectList(categories, "CategoryId", "CategoryName", selectCid);
             ViewBag.authors = new SelectList(authors, "AuthorId", "AuthorName", selectAid);
+            ViewBag.UserName = getUserNameByToken();
             return View(book);
         }
 
@@ -167,7 +156,6 @@ namespace BookStoreClient.Areas.Admin.Controllers
 
         public async Task<IActionResult> UpdateProduct(BookDto model, IFormFile imageFile)
         {
-
             {
                 try
                 {
@@ -209,6 +197,26 @@ namespace BookStoreClient.Areas.Admin.Controllers
             }
 
             return RedirectToPage("/admin/product/updateproduct", new { bookId = model.BookId });
+        }
+
+        private string getUserNameByToken()
+        {
+            string token = _httpContextAccessor.HttpContext.Session.Get<String>("token");
+            var username = "";
+            if (string.IsNullOrEmpty(token)) // Kiểm tra chuỗi token có rỗng hoặc null không
+            {
+                Console.WriteLine("Chuỗi token không được để trống hoặc null.");
+                token = "";
+            }
+            else
+            {
+                var handler = new JwtSecurityTokenHandler();
+                var jwtToken = handler.ReadJwtToken(token);
+
+                // Trích xuất tên người dùng từ payload
+                username = jwtToken.Payload["username"]?.ToString();
+            }
+            return username;
         }
     }
 }

@@ -1,9 +1,10 @@
 ﻿@using BusinessObjects.Models;
 @using BusinessObjects.DTO;
+@using Microsoft.AspNetCore.Identity;
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
-@model List<ImportDetailCreateDto>
+@model List<ImportDetailDto>
 @{
-    ViewData["Title"] = "AddImportForm";
+    ViewData["Title"] = "ViewDetailImport";
     Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
 }
 
@@ -16,10 +17,7 @@
                     <div class="table-data__tool-left">
                     </div>
                     <div class="table-data__tool-right">
-                        <button class="au-btn au-btn-icon au-btn--green au-btn--small" style="background-color: aliceblue">
-                            <a asp-action="AddImportDetailForm"> <i class="zmdi zmdi-plus"></i>Nhập thêm sản phẩm</a>
-                        </button>
-
+                      
                     </div>
                 </div>
                 <div class="table-responsive table--no-card m-b-30">
@@ -27,6 +25,7 @@
                         <thead>
                             <tr>
                                 <th>Mã sản phẩm</th>
+                                <th>Tên sản phẩm</th>
                                 <th>Số lượng</th>
                                 <th>Giá nhập</th>
                                 <th>Giá bán</th>
@@ -38,6 +37,7 @@
                             {
                                 <tr>
                                     <td>@importDetail.BookId</td>
+                                    <td>@importDetail.BookTitle</td>
                                     <td>@importDetail.Quantity</td>
                                     <td>@importDetail.InputPrice</td>
                                     <td>@importDetail.OutputPrice</td>
@@ -47,9 +47,9 @@
                         </tbody>
                     </table>
                 </div>
-                <form asp-action="AddImport" method="post">
-                    <input type="submit" value="Xác nhận nhập hàng" class="btn btn-success btn-sm" />
-                </form>
+            </div>
+            <div class="form-group">
+                <a href="/admin/import" class="btn btn-sm btn-primary">Quay lại danh sách phiếu nhập</a>
             </div>
         </div>
     </div>
