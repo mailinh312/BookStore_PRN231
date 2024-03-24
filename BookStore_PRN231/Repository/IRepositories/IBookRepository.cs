@@ -10,7 +10,7 @@ namespace Repository.IRepositories
 {
     public interface IBookRepository
     {
-        List<BookDto> GetAllBooks();
+        ProductResponse GetAllBooks(ProductRequest productRequest);
         List<BookDto> GetBooksByTitle(string title);
         BookDto GetByBookById(int id);
         List<BookDto> GetBooksByCategory(int id);
