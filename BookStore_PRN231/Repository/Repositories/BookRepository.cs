@@ -53,34 +53,20 @@ namespace Repository.Repositories
             }
         }
 
-        public ProductResponse GetAllBooks(ProductRequest request)
+        public List<BookDto> GetAllBooks()
         {
             try
             {
-                ProductResponse response;
                 List<Book> books = _context.Books.Include(x => x.Author).Include(x => x.Category).ToList();
 
                 if (!books.Any())
                 {
                     throw new Exception("List book is empty!");
                 }
-
-                if(request.AuthorId != 0)
-                {
-                    books = books.Where(x => x.AuthorId == request.AuthorId).ToList();
-                }
-                if(request.CategoryId != 0)
-                {
-                    books = books.Where(x => x.CategoryId == request.CategoryId).ToList();
-                }
-                List<BookDto> bookDTOs = _mapper.Map<List<BookDto>>(books).Paginate(request).ToList();
-                response = new ProductResponse
-                {
-                    Product = bookDTOs,
-                    Page = Paging.GetPagingResponse(request, books.Count())
-                }; 
+                List<BookDto> bookDTOs = _mapper.Map<List<BookDto>>(books);
                
-                return response;
+                
+                return bookDTOs;
             }
             catch (Exception ex)
             {

@@ -19,11 +19,12 @@ namespace BookStoreAPI.Controllers
         }
 
         [HttpGet("AllBooks")]
-        public async Task<ActionResult<ProductResponse>> GetAllBooks([FromBody]ProductRequest productRequest)
+        public IActionResult GetAllBooks()
         {
             try
             {
-                return Ok(_bookRepository.GetAllBooks(productRequest));
+                List<BookDto> bookDTOs = _bookRepository.GetAllBooks();
+                return Ok(bookDTOs);
             }
             catch (Exception ex)
             {

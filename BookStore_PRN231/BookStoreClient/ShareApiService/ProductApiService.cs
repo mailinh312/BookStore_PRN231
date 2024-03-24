@@ -19,9 +19,9 @@ namespace BookStoreClient.ShareApiService
             ApiUrl = "https://localhost:5000/api";
         }
 
-        public async Task<List<BookDto>> GetBooks(ProductRequest productRequest)
+        public async Task<List<BookDto>> GetBooks()
         {
-            var jsonContent = new StringContent(JsonConvert.SerializeObject(productRequest), Encoding.UTF8, "application/json");
+
             HttpResponseMessage response = await client.GetAsync(ApiUrl + "/Book/AllBooks");
             string strBook = await response.Content.ReadAsStringAsync();
 
@@ -35,6 +35,7 @@ namespace BookStoreClient.ShareApiService
 
         public async Task<BookDto> GetBookById(int id)
         {
+
             HttpResponseMessage response = await client.GetAsync(ApiUrl + "/Book/" + id);
             string strBook = await response.Content.ReadAsStringAsync();
 
