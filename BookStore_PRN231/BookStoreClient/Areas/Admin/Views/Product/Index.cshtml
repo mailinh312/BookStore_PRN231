@@ -1,6 +1,7 @@
 ﻿@using BusinessObjects.Models;
 @using BusinessObjects.DTO;
 @using Microsoft.AspNetCore.Identity;
+@model List<BookDto>
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
 
@@ -8,6 +9,36 @@
     ViewData["Title"] = "Index";
     Layout = "~/Areas/Admin/Views/Shared/_LayoutAdmin.cshtml";
 }
+<style>
+    .page {
+        margin-bottom: 10px; /* Khoảng cách dưới của div */
+        display: inline-block;
+    }
+
+        /* CSS cho liên kết */
+        .page a {
+            
+            color: #007bff; /* Màu văn bản mặc định cho các liên kết */
+            text-decoration: none; /* Loại bỏ gạch chân mặc định */
+            padding: 5px 10px; /* Kích thước của padding cho liên kết */
+            border: 1px solid #007bff; /* Viền liên kết */
+            border-radius: 5px; /* Bo tròn viền liên kết */
+        }
+
+            /* CSS cho khi di chuột qua liên kết */
+            .page a:hover {
+                text-decoration: underline; /* Hiển thị gạch chân khi di chuột qua */
+                background-color: #f0f0f0; /* Màu nền khi di chuột qua */
+            }
+
+    /* CSS cho liên kết của trang hiện tại */
+    .current-page {
+        color: red; /* Màu sắc tùy chọn cho trang hiện tại */
+        font-weight: bold; /* Định dạng văn bản tùy chọn cho trang hiện tại */
+        background-color: #ffcccc; /* Màu nền cho trang hiện tại */
+        border-color: red; /* Màu viền cho trang hiện tại */
+    }
+</style>
 
 <script>
     function submitForm() {
@@ -66,7 +97,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach (var book in ViewBag.books)
+                            @foreach (var book in Model)
                             {
                                 <tr>
                                     <td>@book.BookId</td>
@@ -94,7 +125,12 @@
                         </tbody>
                     </table>
                 </div>
-                
+                @for (int i = 1; i <= @ViewBag.NumberOfPages; i++)
+                {
+                    <div class="page">
+                        <a asp-action="Index" asp-route-page="@i" asp-route-cid="@ViewBag.SelectCid" asp-route-aid="@ViewBag.SelectAid" asp-route-search="@ViewBag.searchString" class="@(i == ViewBag.CurrentPage ? "current-page" : "")">@i</a>
+                    </div>
+                }
             </div>
         </div>
     </div>

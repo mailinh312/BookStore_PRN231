@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using BusinessObjects.DTO;
 using BusinessObjects.Models;
+using Microsoft.EntityFrameworkCore;
 using Repository.IRepositories;
 using System;
 using System.Collections.Generic;
@@ -41,6 +42,27 @@ namespace Repository.Repositories
             }
         }
 
+        public List<Top3Category> GetTop3BestCategories()
+        {
+            try
+            {
+                List<Top3Category> list = _context.OrderDetails.Include(od => od.Book).GroupBy(od => od.Book.CategoryId).Select(x => new Top3Category
+                {
+                    CategoryId = x.Key,
+                    SoldQuantity = x.Sum(od => od.Quantity)
+                }).OrderByDescending(x => x.SoldQuantity).Take(3).ToList();
+
+                foreach (var item in list)
+                {
+                    item.CategoryName = _context.Categories.FirstOrDefault(x => x.CategoryId == item.CategoryId).CategoryName;
+                }
+                return list;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
         public List<CategoryDto> GetAllCategories()
         {
             try

@@ -36,7 +36,7 @@ namespace Repository.Repositories
         {
             try
             {
-                var orders = _context.Orders.Include(x => x.User).Include(x => x.Status).ToList();
+                var orders = _context.Orders.Include(x => x.User).Include(x => x.Status).OrderByDescending(x => x.OrderDate).ToList();
                 if (!orders.Any())
                 {
                     throw new Exception("List is empty!");
@@ -84,7 +84,7 @@ namespace Repository.Repositories
         {
             try
             {
-                var orders = _context.Orders.Where(x => x.UserId == userId).Include(x => x.User).Include(x => x.Status).ToList();
+                var orders = _context.Orders.Where(x => x.UserId == userId).Include(x => x.User).Include(x => x.Status).OrderByDescending(x => x.OrderDate).ToList();
                 if (!orders.Any())
                 {
                     throw new Exception("List is empty!");

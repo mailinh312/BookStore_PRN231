@@ -31,6 +31,34 @@ namespace BookStoreClient.ShareApiService
             return orders;
         }
 
+        public async Task<List<OrderDto>> GetOrdersByUserId(string userId)
+        {
+            HttpResponseMessage response = await client.GetAsync(ApiUrl + "/Order/UserId?id=" + userId);
+            string strOrder = await response.Content.ReadAsStringAsync();
+
+
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true,
+            };
+            List<OrderDto> orders = System.Text.Json.JsonSerializer.Deserialize<List<OrderDto>>(strOrder, options);
+            return orders;
+        }
+
+        public async Task<List<OrderDetailDto>> GetOrderDetails()
+        {
+            HttpResponseMessage response = await client.GetAsync(ApiUrl + "/OrderDetail/AllOrderDetail");
+            string strOrder = await response.Content.ReadAsStringAsync();
+
+
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true,
+            };
+            List<OrderDetailDto> orders = System.Text.Json.JsonSerializer.Deserialize<List<OrderDetailDto>>(strOrder, options);
+            return orders;
+        }
+
         public async Task<int> CreateOrder(OrderCreateDto model)
         {
 

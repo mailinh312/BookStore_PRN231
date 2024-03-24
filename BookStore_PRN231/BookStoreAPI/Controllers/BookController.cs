@@ -32,6 +32,20 @@ namespace BookStoreAPI.Controllers
             }
         }
 
+        [HttpGet("Top5BestSeller")]
+        public IActionResult GetTop5()
+        {
+            try
+            {
+                List<BestSellerProduct> bookDTOs = _bookRepository.GetTop5BestSeller();
+                return Ok(bookDTOs);
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
         [HttpGet("Author")]
         public IActionResult GetBooksByAuthor(int id)
         {

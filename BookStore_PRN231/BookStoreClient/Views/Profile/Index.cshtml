@@ -1,0 +1,88 @@
+﻿@using BusinessObjects.DTO
+@model UserDto
+@{
+    ViewData["Title"] = "Index";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+<style>
+    #profile-form {
+        width: 100%; /* Chiều rộng của form */
+        max-width: 400px; /* Giới hạn chiều rộng tối đa của form */
+        margin: auto; /* Căn giữa form */
+        padding: 20px; /* Khoảng cách bên trong form */
+        border: 1px solid #ccc; /* Viền của form */
+        border-radius: 5px; /* Bo tròn góc của form */
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1); /* Đổ bóng cho form */
+    }
+
+    /* CSS cho nhãn (label) */
+    label {
+        font-weight: bold; /* Đậm chữ của nhãn */
+    }
+
+    /* CSS cho các input */
+    input {
+        width: 100%; /* Chiều rộng của input */
+        padding: 8px; /* Kích thước của padding */
+        margin-bottom: 10px; /* Khoảng cách dưới của input */
+        border: 1px solid #ccc; /* Viền của input */
+        border-radius: 5px; /* Bo tròn góc của input */
+        box-sizing: border-box; /* Đảm bảo kích thước của input tính cả border và padding */
+    }
+
+        /* CSS cho các input khi được focus */
+        input:focus {
+            outline: none; /* Loại bỏ đường viền khi input được focus */
+            border-color: #007bff; /* Màu viền của input khi focus */
+        }
+
+    /* CSS cho các span hiển thị lỗi */
+    span.text-danger {
+        color: red; /* Màu của văn bản hiển thị lỗi */
+    }
+
+    /* CSS cho nút lưu (Save) */
+    #update-profile-button {
+        width: 100%; /* Chiều rộng của nút */
+        padding: 10px; /* Kích thước của padding */
+        border: none; /* Loại bỏ viền của nút */
+        border-radius: 5px; /* Bo tròn góc của nút */
+        background-color: #007bff; /* Màu nền của nút */
+        color: white; /* Màu văn bản của nút */
+        cursor: pointer; /* Đổi con trỏ chuột thành pointer khi di chuột qua nút */
+        transition: background-color 0.3s; /* Hiệu ứng chuyển đổi màu nền */
+    }
+
+        /* CSS cho nút lưu (Save) khi di chuột qua */
+        #update-profile-button:hover {
+            background-color: #0056b3; /* Màu nền của nút khi di chuột qua */
+        }
+</style>
+<div class="row">
+    <div class="col-md-6" style="margin-left: 390px">
+        <form id="profile-form" asp-action="UpdateUser" method="post">
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div class="form-floating">
+                <label asp-for="UserName"></label>
+                <input asp-for="UserName" readonly />
+            </div>
+            <div>
+                <label asp-for="Fullname"></label>
+                <input asp-for="Fullname" />
+                <span asp-validation-for="Fullname" class="text-danger"></span>
+            </div>
+            <div>
+                <label asp-for="PhoneNumber"></label>
+                <input asp-for="PhoneNumber" />
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            </div>
+            <div>
+                <label asp-for="Address"></label>
+                <input asp-for="Address" />
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
+            <button id="update-profile-button" type="submit" class="w-100 btn btn-lg btn-primary" style="margin-bottom: 50px">Cập nhật</button>
+        </form>
+    </div>
+</div>
+

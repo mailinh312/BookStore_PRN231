@@ -20,5 +20,8 @@ namespace Repository.IRepositories
 
         Task<UserDto> GetUserById(string id);
         Task UpdateRole(List<String> roles, string username);
+        Task<int> GetTotalUser();
+
+        Task UpdateUser(UserDto user);
     }
 }

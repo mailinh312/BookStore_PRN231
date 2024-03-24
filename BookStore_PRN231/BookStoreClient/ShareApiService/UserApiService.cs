@@ -45,6 +45,21 @@ namespace BookStoreClient.ShareApiService
             List<UserDto> users = System.Text.Json.JsonSerializer.Deserialize<List<UserDto>>(strUser, options);
             return users;
         }
+
+        public async Task<int> GetTotalAccount()
+        {
+            HttpResponseMessage response = await client.GetAsync(ApiUrl + "/AppUser/TotalAccount");
+            string strUser = await response.Content.ReadAsStringAsync();
+
+
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true,
+            };
+            dynamic responseObject = JsonConvert.DeserializeObject<dynamic>(strUser);
+            int count = Convert.ToInt32(responseObject);
+            return count;
+        }
         public async Task<HttpResponseMessage> Login(LoginDTO model)
         {
             var jsonContent = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json");
@@ -77,7 +92,7 @@ namespace BookStoreClient.ShareApiService
 
         public async Task<List<string>> GetAllRolesByUsername(string username)
         {
-            HttpResponseMessage response = await client.GetAsync(ApiUrl + "/Role/Username/"+username);
+            HttpResponseMessage response = await client.GetAsync(ApiUrl + "/Role/Username/" + username);
             string strRole = await response.Content.ReadAsStringAsync();
 
 
@@ -93,6 +108,14 @@ namespace BookStoreClient.ShareApiService
             var jsonContent = new StringContent(JsonConvert.SerializeObject(roles), Encoding.UTF8, "application/json");
 
             HttpResponseMessage response = await client.PutAsync(ApiUrl + "/AppUser?username=" + username, jsonContent);
+            return response;
+        }
+
+        public async Task<HttpResponseMessage> UpdateUser(UserDto model)
+        {
+            var jsonContent = new StringContent(JsonConvert.SerializeObject(model), Encoding.UTF8, "application/json");
+
+            HttpResponseMessage response = await client.PutAsync(ApiUrl + "/AppUser/UpdateUser", jsonContent);
             return response;
         }
     }

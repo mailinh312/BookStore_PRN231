@@ -27,7 +27,11 @@ namespace BookStoreClient.Areas.Admin.Controllers
         }
         public async Task<IActionResult> Index(string? search)
         {
-            ViewBag.UserName = getUserNameByToken();
+			if (!IsAccess())
+			{
+				return Redirect("/forbidden");
+			}
+			ViewBag.UserName = getUserNameByToken();
 
             List<StatusDto> status = await orderApiService.GetAllStatus();
             List<OrderDto> orders = await orderApiService.GetOrders();
@@ -53,7 +57,11 @@ namespace BookStoreClient.Areas.Admin.Controllers
         [HttpGet("detailorder")]
         public async Task<IActionResult> DetailOrder(int orderId)
         {
-            List<OrderDetailDto> orderDetailDtos = await orderApiService.GetOrderDetailByOrderId(orderId);
+			if (!IsAccess())
+			{
+				return Redirect("/forbidden");
+			}
+			List<OrderDetailDto> orderDetailDtos = await orderApiService.GetOrderDetailByOrderId(orderId);
             ViewBag.UserName = getUserNameByToken();
             return View(orderDetailDtos);
         }
@@ -61,9 +69,14 @@ namespace BookStoreClient.Areas.Admin.Controllers
         [HttpPost("updateorderstatus")]
         public async Task<IActionResult> UpdateOrderStatus(int orderId, int sid)
         {
-            try
-            {
 
+			if (!IsAccess())
+			{
+				return Redirect("/forbidden");
+			}
+
+			try
+            {
                 HttpResponseMessage response = await orderApiService.UpdateOrderStatus(orderId, sid);
                 if (response.IsSuccessStatusCode)
                 {
@@ -102,5 +115,42 @@ namespace BookStoreClient.Areas.Admin.Controllers
             }
             return username;
         }
-    }
+
+		private List<string> getRoleByToken()
+		{
+			string token = _httpContextAccessor.HttpContext.Session.Get<String>("token");
+			if (string.IsNullOrEmpty(token)) // Kiểm tra chuỗi token có rỗng hoặc null không
+			{
+				Console.WriteLine("Chuỗi token không được để trống hoặc null.");
+				token = "";
+			}
+			else
+			{
+				var handler = new JwtSecurityTokenHandler();
+				var jwtToken = handler.ReadJwtToken(token);
+
+				if (jwtToken != null)
+				{
+					// Lấy danh sách các Claims từ token
+					var claims = jwtToken.Claims;
+
+					// Lọc ra các Claims có loại là "role" và trích xuất giá trị
+					var roles = claims.Where(c => c.Type == "role").Select(c => c.Value).ToList();
+
+					return roles;
+				}
+			}
+			return new List<string>();
+		}
+
+		private bool IsAccess()
+		{
+			List<string> roles = getRoleByToken();
+			if (roles.Contains("Order staff") || roles.Contains("Administrator"))
+			{
+				return true;
+			}
+			return false;
+		}
+	}
 }

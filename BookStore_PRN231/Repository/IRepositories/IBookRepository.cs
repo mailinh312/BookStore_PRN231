@@ -18,5 +18,6 @@ namespace Repository.IRepositories
 
         void AddNewBook(BookCreateDto bookDto);
         void UpdateBook(BookDto bookDto);
+        List<BestSellerProduct> GetTop5BestSeller();
     }
 }

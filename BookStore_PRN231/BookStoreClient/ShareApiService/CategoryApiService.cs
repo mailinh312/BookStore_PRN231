@@ -32,6 +32,20 @@ namespace BookStoreClient.ShareApiService
             return categories;
         }
 
+        public async Task<List<Top3Category>> GetTop3Categories()
+        {
+            HttpResponseMessage response = await client.GetAsync(ApiUrl + "/Category/Top3Categories");
+            string strCate = await response.Content.ReadAsStringAsync();
+
+
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true,
+            };
+            List<Top3Category> categories = System.Text.Json.JsonSerializer.Deserialize<List<Top3Category>>(strCate, options);
+            return categories;
+        }
+
         public async Task<CategoryDto> GetCategoryById(int id)
         {
             HttpResponseMessage response = await client.GetAsync(ApiUrl + "/Category/" + id);

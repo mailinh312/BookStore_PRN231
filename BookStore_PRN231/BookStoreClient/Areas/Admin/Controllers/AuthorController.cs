@@ -2,14 +2,15 @@
 using BusinessObjects.DTO;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using Repository.Helpers;
+using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 
 namespace BookStoreClient.Areas.Admin.Controllers
 {
     [Area("Admin")]
     [Route("admin/author")]
-    [Authorize(Roles = "Administrator")]
     public class AuthorController : Controller
     {
 
@@ -20,10 +21,15 @@ namespace BookStoreClient.Areas.Admin.Controllers
         {
             authorApiService = new AuthorApiService();
             _httpContextAccessor = httpContextAccessor;
+
         }
+
         public async Task<IActionResult> Index(string? search)
         {
-
+            if (!IsAccess())
+            {
+                return Redirect("/forbidden");
+            }
             ViewBag.UserName = getUserNameByToken();
 
             List<AuthorDto> authorList = await authorApiService.GetAuthors();
@@ -34,18 +40,29 @@ namespace BookStoreClient.Areas.Admin.Controllers
             }
 
             return View(authorList);
+
         }
+
 
         [HttpGet("addauthor")]
         public IActionResult AddAuthorForm()
         {
-            return View();
+			if (!IsAccess())
+			{
+				return Redirect("/forbidden");
+			}
+			return View();
         }
 
         [HttpPost("addauthor")]
         public async Task<IActionResult> AddAuthor(AuthorCreateDto model)
         {
-            if(model.Bio == null)
+			if (!IsAccess())
+			{
+				return Redirect("/forbidden");
+			}
+
+			if (model.Bio == null)
             {
                 model.Bio = "";
             }
@@ -76,7 +93,11 @@ namespace BookStoreClient.Areas.Admin.Controllers
         [HttpGet("updateauthor")]
         public async Task<IActionResult> UpdateAuthorForm(int authorId)
         {
-            AuthorDto author = await authorApiService.GetAuthorById(authorId);
+			if (!IsAccess())
+			{
+				return Redirect("/forbidden");
+			}
+			AuthorDto author = await authorApiService.GetAuthorById(authorId);
             ViewBag.UserName = getUserNameByToken();
             return View(author);
         }
@@ -84,7 +105,12 @@ namespace BookStoreClient.Areas.Admin.Controllers
         [HttpPost("updateauthor")]
         public async Task<IActionResult> UpdateAuthor(AuthorDto model)
         {
-            if (model.Bio == null)
+			if (!IsAccess())
+			{
+				return Redirect("/forbidden");
+			}
+
+			if (model.Bio == null)
             {
                 model.Bio = "";
             }
@@ -130,6 +156,43 @@ namespace BookStoreClient.Areas.Admin.Controllers
                 username = jwtToken.Payload["username"]?.ToString();
             }
             return username;
+        }
+
+        private List<string> getRoleByToken()
+        {
+            string token = _httpContextAccessor.HttpContext.Session.Get<String>("token");
+            if (string.IsNullOrEmpty(token)) // Kiểm tra chuỗi token có rỗng hoặc null không
+            {
+                Console.WriteLine("Chuỗi token không được để trống hoặc null.");
+                token = "";
+            }
+            else
+            {
+                var handler = new JwtSecurityTokenHandler();
+                var jwtToken = handler.ReadJwtToken(token);
+
+                if (jwtToken != null)
+                {
+                    // Lấy danh sách các Claims từ token
+                    var claims = jwtToken.Claims;
+
+                    // Lọc ra các Claims có loại là "role" và trích xuất giá trị
+                    var roles = claims.Where(c => c.Type == "role").Select(c => c.Value).ToList();
+
+                    return roles;
+                }
+            }
+            return new List<string>();
+        }
+
+        private bool IsAccess()
+        {
+            List<string> roles = getRoleByToken();
+            if (roles.Contains("Order staff") || roles.Contains("Administrator"))
+            {
+                return true;
+            }
+            return false;
         }
     }
 }

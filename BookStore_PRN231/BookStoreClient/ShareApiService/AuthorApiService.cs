@@ -1,4 +1,5 @@
-﻿using BusinessObjects.DTO;
+﻿using Azure.Core;
+using BusinessObjects.DTO;
 using Newtonsoft.Json;
 using System.Net.Http.Headers;
 using System.Text;
@@ -20,6 +21,7 @@ namespace BookStoreClient.ShareApiService
 
         public async Task<List<AuthorDto>> GetAuthors()
         {
+
             HttpResponseMessage response = await client.GetAsync(ApiUrl + "/Author/AllAuthors");
             string strAuthor = await response.Content.ReadAsStringAsync();
 

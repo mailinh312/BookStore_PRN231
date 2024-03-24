@@ -63,6 +63,19 @@ namespace BookStoreAPI.Controllers
             }
         }
 
+        [HttpGet("TotalAccount")]
+        public async Task<IActionResult> GetTotalUser()
+        {
+            try
+            {
+                return Ok(await _repository.GetTotalUser());
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
         [HttpGet("User")]
         public async Task<IActionResult> GetUserById(string id)
         {
@@ -95,6 +108,20 @@ namespace BookStoreAPI.Controllers
             try
             {
                 await _repository.UpdateRole(roles, username);
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+        [HttpPut("UpdateUser")]
+        public async Task<IActionResult> UpdateUser(UserDto user)
+        {
+            try
+            {
+                await _repository.UpdateUser(user);
                 return Ok();
             }
             catch (Exception ex)

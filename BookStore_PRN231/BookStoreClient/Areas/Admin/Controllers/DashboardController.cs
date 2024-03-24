@@ -1,26 +1,39 @@
 ﻿using BookStoreClient.ShareApiService;
 using BusinessObjects.DTO;
+using BusinessObjects.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Repository.Helpers;
 using System.IdentityModel.Tokens.Jwt;
 
 namespace BookStoreClient.Areas.Admin.Controllers
 {
 	[Area("Admin")]
-	[Route("admin/user")]
-	public class UserController : Controller
+	[Route("admin/dashboard")]
+	public class DashboardController : Controller
 	{
+		private readonly ProductApiService productApiService;
+		private readonly CategoryApiService categoryApiService;
+		private readonly AuthorApiService authorApiService;
+		private readonly OrderApiService orderApiService;
 		private readonly UserApiService userApiService;
+		private readonly ImportApiService importApiService;
+		private readonly IWebHostEnvironment _environment;
 		private readonly IHttpContextAccessor _httpContextAccessor;
-		public UserController(IHttpContextAccessor httpContextAccessor)
+
+		public DashboardController(IWebHostEnvironment environment, IHttpContextAccessor httpContextAccessor)
 		{
+			productApiService = new ProductApiService();
+			categoryApiService = new CategoryApiService();
+			authorApiService = new AuthorApiService();
+			orderApiService = new OrderApiService();
 			userApiService = new UserApiService();
+			importApiService = new ImportApiService();
+			_environment = environment;
 			_httpContextAccessor = httpContextAccessor;
 		}
-		public async Task<IActionResult> Index()
+
+		public async Task<IActionResult> IndexAsync()
 		{
 			if (!IsAccess())
 			{
@@ -28,42 +41,26 @@ namespace BookStoreClient.Areas.Admin.Controllers
 			}
 			ViewBag.UserName = getUserNameByToken();
 
-			List<UserDto> users = await userApiService.GetUsers();
-			return View(users);
-		}
-		[HttpGet("updateuser")]
-		public async Task<IActionResult> UpdateUserForm(string userName)
-		{
+			List<CategoryDto> categories = await categoryApiService.GetCategories();
+			List<AuthorDto> authors = await authorApiService.GetAuthors();
+			List<BookDto> books = await productApiService.GetBooks();
 
-			if (!IsAccess())
-			{
-				return Redirect("/forbidden");
-			}
-			List<string> roles = await userApiService.GetAllRoles();
-			ViewBag.Roles = roles;
-			ViewBag.UserNameUpdate = userName;
-			ViewBag.userRoles = await userApiService.GetAllRolesByUsername(userName);
-			ViewBag.UserName = getUserNameByToken();
+			List<BestSellerProduct> Top5BestSellers = await productApiService.GetTop5Books();
+			List<Top3Category> Top3Categories = await categoryApiService.GetTop3Categories();
+			List<BookDto> RunOutProducts = (await productApiService.GetBooks()).Where(o => o.StockQuantity <= 5).ToList();
+
+			int TotalAccount = await userApiService.GetTotalAccount();
+			int NumOfSold = Convert.ToInt32((await orderApiService.GetOrderDetails()).Sum(x => x.Quantity));
+			decimal TotalInvestment = (decimal)(await importApiService.GetImports()).Sum(x => x.TotalPrice);
+			decimal TotalEarning = (decimal)(await orderApiService.GetOrders()).Sum(x => x.TotalPrice) - TotalInvestment;
+			ViewBag.TotalAccount = TotalAccount;
+			ViewBag.NumOfSold = NumOfSold;
+			ViewBag.TotalEarning = TotalEarning;
+			ViewBag.TotalInvestment = TotalInvestment;
+			ViewBag.Top5BestSeller = Top5BestSellers;
+			ViewBag.Top3Category = Top3Categories;
+			ViewBag.RunOutProduct = RunOutProducts;
 			return View();
-		}
-
-		[HttpPost("Updateuser")]
-		public async Task<IActionResult> UpdateRoleUser(List<string> selectRole, string username)
-		{
-			if (!IsAccess())
-			{
-				return Redirect("/forbidden");
-			}
-
-			if (selectRole != null)
-			{
-				HttpResponseMessage response = await userApiService.UpdateRoleUser(selectRole, username);
-				if (response.IsSuccessStatusCode)
-				{
-					return RedirectToAction("Index");
-				}
-			}
-			return RedirectToAction("UpdateUserForm");
 		}
 
 		private string getUserNameByToken()

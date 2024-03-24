@@ -28,6 +28,20 @@ namespace BookStoreAPI.Controllers
             }
         }
 
+        [HttpGet("Top3Categories")]
+        public IActionResult GetTop3Categories()
+        {
+            try
+            {
+                return Ok(_categoryRepository.GetTop3BestCategories());
+            }
+            catch (Exception ex)
+            {
+                return NotFound(ex.Message);
+            }
+        }
+
+
         [HttpGet("CategoriesActive")]
         public IActionResult GetCategoriesWithActiveIsTrue()
         {

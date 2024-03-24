@@ -58,6 +58,11 @@ namespace Repository.Repositories
             }
         }
 
+        public async Task<int> GetTotalUser()
+        {
+            return _userManager.Users.Count();
+        }
+
         public async Task<UserDto> GetUserById(string id)
         {
             try
@@ -191,6 +196,19 @@ namespace Repository.Repositories
 
             //thêm một mảng các role cho user
             var rsAdd = await _userManager.AddToRolesAsync(user, addRoles);
+        }
+
+        public async Task UpdateUser(UserDto user)
+        {
+            var userExist = await _userManager.FindByNameAsync(user.UserName);
+
+            if (userExist != null)
+            {
+                userExist.Fullname = user.UserName;
+                userExist.PhoneNumber = user.PhoneNumber;
+                userExist.Address = user.Address;
+                var result = await _userManager.UpdateAsync(userExist);
+            }
         }
     }
 }

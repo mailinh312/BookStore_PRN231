@@ -17,6 +17,7 @@ namespace Repository.IRepositories
         CategoryDto GetCategoryById(int id);
         void AddNewCategory(CategoryCreateDto categoryDto);
         void UpdateCategory(CategoryDto categoryDto);
+        List<Top3Category> GetTop3BestCategories();
 
     }
 }

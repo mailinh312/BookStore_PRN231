@@ -21,8 +21,11 @@ namespace BookStoreClient.Areas.Admin.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            
-            ViewBag.UserName = getUserNameByToken();
+			if (!IsAccess())
+			{
+				return Redirect("/forbidden");
+			}
+			ViewBag.UserName = getUserNameByToken();
 
             List<CategoryDto> listCate = await categoryApiService.GetCategories();
             return View(listCate);
@@ -31,14 +34,22 @@ namespace BookStoreClient.Areas.Admin.Controllers
         [HttpGet("addcategory")]
         public async Task<IActionResult> AddCategoryForm()
         {
-            ViewBag.UserName = getUserNameByToken();
+			if (!IsAccess())
+			{
+				return Redirect("/forbidden");
+			}
+			ViewBag.UserName = getUserNameByToken();
             return View();
         }
 
         [HttpPost("addcategory")]
         public async Task<IActionResult> AddCategory(CategoryCreateDto model)
         {
-            if (ModelState.IsValid)
+			if (!IsAccess())
+			{
+				return Redirect("/forbidden");
+			}
+			if (ModelState.IsValid)
             {
                 try
                 {
@@ -68,7 +79,11 @@ namespace BookStoreClient.Areas.Admin.Controllers
         [HttpGet("updatecategory")]
         public async Task<IActionResult> UpdateCategoryForm(int categoryId)
         {
-            CategoryDto model = await categoryApiService.GetCategoryById(categoryId);
+			if (!IsAccess())
+			{
+				return Redirect("/forbidden");
+			}
+			CategoryDto model = await categoryApiService.GetCategoryById(categoryId);
             ViewBag.UserName = getUserNameByToken();
             return View(model);
         }
@@ -76,8 +91,12 @@ namespace BookStoreClient.Areas.Admin.Controllers
         [HttpPost("updatecategory")]
         public async Task<IActionResult> UpdateCategory(CategoryDto model)
         {
+			if (!IsAccess())
+			{
+				return Redirect("/forbidden");
+			}
 
-            if (ModelState.IsValid)
+			if (ModelState.IsValid)
             {
                 try
                 {
@@ -123,5 +142,41 @@ namespace BookStoreClient.Areas.Admin.Controllers
             }
             return username;
         }
-    }
+		private List<string> getRoleByToken()
+		{
+			string token = _httpContextAccessor.HttpContext.Session.Get<String>("token");
+			if (string.IsNullOrEmpty(token)) // Kiểm tra chuỗi token có rỗng hoặc null không
+			{
+				Console.WriteLine("Chuỗi token không được để trống hoặc null.");
+				token = "";
+			}
+			else
+			{
+				var handler = new JwtSecurityTokenHandler();
+				var jwtToken = handler.ReadJwtToken(token);
+
+				if (jwtToken != null)
+				{
+					// Lấy danh sách các Claims từ token
+					var claims = jwtToken.Claims;
+
+					// Lọc ra các Claims có loại là "role" và trích xuất giá trị
+					var roles = claims.Where(c => c.Type == "role").Select(c => c.Value).ToList();
+
+					return roles;
+				}
+			}
+			return new List<string>();
+		}
+
+		private bool IsAccess()
+		{
+			List<string> roles = getRoleByToken();
+			if (roles.Contains("Order staff") || roles.Contains("Administrator"))
+			{
+				return true;
+			}
+			return false;
+		}
+	}
 }

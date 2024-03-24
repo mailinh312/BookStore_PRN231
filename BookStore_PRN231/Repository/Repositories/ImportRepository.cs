@@ -41,7 +41,7 @@ namespace Repository.Repositories
         {
             try
             {
-                var imports = _context.Imports.Include(x => x.User).ToList();
+                var imports = _context.Imports.Include(x => x.User).OrderByDescending(x => x.ImportDate).ToList();
                 if (!imports.Any())
                 {
                     throw new Exception("List is empty");

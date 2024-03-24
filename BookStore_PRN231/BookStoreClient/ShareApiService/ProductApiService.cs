@@ -33,6 +33,20 @@ namespace BookStoreClient.ShareApiService
             return books;
         }
 
+        public async Task<List<BestSellerProduct>> GetTop5Books()
+        {
+
+            HttpResponseMessage response = await client.GetAsync(ApiUrl + "/Book/Top5BestSeller");
+            string strBook = await response.Content.ReadAsStringAsync();
+
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true,
+            };
+            List<BestSellerProduct> books = System.Text.Json.JsonSerializer.Deserialize<List<BestSellerProduct>>(strBook, options);
+            return books;
+        }
+
         public async Task<BookDto> GetBookById(int id)
         {
 

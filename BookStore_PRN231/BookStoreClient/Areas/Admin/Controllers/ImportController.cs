@@ -27,8 +27,11 @@ namespace BookStoreClient.Areas.Admin.Controllers
         }
         public async Task<IActionResult> Index()
         {
-
-            ViewBag.UserName = getUserNameByToken();
+			if (!IsAccess())
+			{
+				return Redirect("/forbidden");
+			}
+			ViewBag.UserName = getUserNameByToken();
 
             List<ImportDto> list = (await importApiService.GetImports()) != null? (await importApiService.GetImports()) : new List<ImportDto>();
             return View(list);
@@ -37,7 +40,11 @@ namespace BookStoreClient.Areas.Admin.Controllers
         [HttpGet("viewdetail")]
         public async Task<IActionResult> ViewDetailImport(int importId)
         {
-            List<ImportDetailDto> importDetailDtos = await importApiService.GetImportDetailByImportId(importId);
+			if (!IsAccess())
+			{
+				return Redirect("/forbidden");
+			}
+			List<ImportDetailDto> importDetailDtos = await importApiService.GetImportDetailByImportId(importId);
 
             ViewBag.UserName = getUserNameByToken();
             return View(importDetailDtos);
@@ -46,14 +53,21 @@ namespace BookStoreClient.Areas.Admin.Controllers
         [HttpGet("addimport")]
         public async Task<IActionResult> AddImportForm()
         {
-            return View(ImportDetailList);
+			if (!IsAccess())
+			{
+				return Redirect("/forbidden");
+			}
+			return View(ImportDetailList);
         }
 
         [HttpPost("addimport")]
         public async Task<IActionResult> AddImport()
         {
-            
-            string username = getUserNameByToken();
+			if (!IsAccess())
+			{
+				return Redirect("/forbidden");
+			}
+			string username = getUserNameByToken();
             UserDto user = (await userApiService.GetUserByName(username)).FirstOrDefault();
             ImportCreateDto import = new ImportCreateDto();
             decimal? totalPrice = 0;
@@ -82,7 +96,11 @@ namespace BookStoreClient.Areas.Admin.Controllers
         [HttpGet("addimportdetailform")]
         public async Task<IActionResult> AddImportDetailForm()
         {
-            List<BookDto> books = await productApiService.GetBooks();
+			if (!IsAccess())
+			{
+				return Redirect("/forbidden");
+			}
+			List<BookDto> books = await productApiService.GetBooks();
             ViewBag.Books = books;
             ViewBag.UserName = getUserNameByToken();
             return View();
@@ -91,7 +109,11 @@ namespace BookStoreClient.Areas.Admin.Controllers
         [HttpPost("addimportdetailform")]
         public IActionResult AddImportDetail(ImportDetailCreateDto model)
         {
-            if (ModelState.IsValid)
+			if (!IsAccess())
+			{
+				return Redirect("/forbidden");
+			}
+			if (ModelState.IsValid)
             {
                 ImportDetailList.Add(model);
             }
@@ -117,5 +139,42 @@ namespace BookStoreClient.Areas.Admin.Controllers
             }
             return username;
         }
-    }
+
+		private List<string> getRoleByToken()
+		{
+			string token = _httpContextAccessor.HttpContext.Session.Get<String>("token");
+			if (string.IsNullOrEmpty(token)) // Kiểm tra chuỗi token có rỗng hoặc null không
+			{
+				Console.WriteLine("Chuỗi token không được để trống hoặc null.");
+				token = "";
+			}
+			else
+			{
+				var handler = new JwtSecurityTokenHandler();
+				var jwtToken = handler.ReadJwtToken(token);
+
+				if (jwtToken != null)
+				{
+					// Lấy danh sách các Claims từ token
+					var claims = jwtToken.Claims;
+
+					// Lọc ra các Claims có loại là "role" và trích xuất giá trị
+					var roles = claims.Where(c => c.Type == "role").Select(c => c.Value).ToList();
+
+					return roles;
+				}
+			}
+			return new List<string>();
+		}
+
+		private bool IsAccess()
+		{
+			List<string> roles = getRoleByToken();
+			if (roles.Contains("Stock Manager") || roles.Contains("Administrator"))
+			{
+				return true;
+			}
+			return false;
+		}
+	}
 }

@@ -22,6 +22,13 @@ namespace BookStoreClient.Controllers
         public async Task<IActionResult> Index(int productId)
         {
             BookDto book = await productApiService.GetBookById(productId);
+            List<BookDto> BookRelate = (await productApiService.GetBooks()).Where(x => x.CategoryId == book.CategoryId).ToList();
+            if (BookRelate.Any())
+            {
+                Random random = new Random();
+                BookRelate = BookRelate.OrderBy(x => random.Next()).Take(3).ToList();
+            }
+            ViewBag.BookRelate = BookRelate;
             return View(book);
         }
 

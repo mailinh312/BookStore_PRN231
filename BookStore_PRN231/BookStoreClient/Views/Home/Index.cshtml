@@ -5,16 +5,100 @@
     ViewData["Title"] = "Home Page";
 }
 
+<style>
+	.page {
+		margin-bottom: 10px; /* Khoảng cách dưới của div */
+		display: inline-block;
+	}
+
+		/* CSS cho liên kết */
+		.page a {
+			color: #007bff; /* Màu văn bản mặc định cho các liên kết */
+			text-decoration: none; /* Loại bỏ gạch chân mặc định */
+			padding: 5px 10px; /* Kích thước của padding cho liên kết */
+			border: 1px solid #007bff; /* Viền liên kết */
+			border-radius: 5px; /* Bo tròn viền liên kết */
+		}
+
+			/* CSS cho khi di chuột qua liên kết */
+			.page a:hover {
+				text-decoration: underline; /* Hiển thị gạch chân khi di chuột qua */
+				background-color: #f0f0f0; /* Màu nền khi di chuột qua */
+			}
+
+	/* CSS cho liên kết của trang hiện tại */
+	.current-page {
+		color: red; /* Màu sắc tùy chọn cho trang hiện tại */
+		font-weight: bold; /* Định dạng văn bản tùy chọn cho trang hiện tại */
+		background-color: #ffcccc; /* Màu nền cho trang hiện tại */
+		border-color: red; /* Màu viền cho trang hiện tại */
+	}
+
+	.rs-select2--light {
+		display: inline-block; /* Hiển thị các thẻ select trên cùng một dòng */
+		margin-right: 10px; /* Khoảng cách giữa các thẻ select */
+	}
+
+	select {
+		padding: 8px 12px; /* Kích thước của padding */
+		font-size: 14px; /* Kích thước của font */
+		border: 1px solid #ccc; /* Viền của select */
+		border-radius: 4px; /* Bo tròn góc của select */
+		background-color: #fff; /* Màu nền của select */
+		color: #333; /* Màu văn bản của select */
+		
+	}
+
+		select:hover {
+			border-color: #999; /* Màu viền của select khi di chuột qua */
+		}
+
+		/* CSS cho khi select được focus */
+		select:focus {
+			outline: none; /* Loại bỏ đường viền khi select được focus */
+			border-color: #007bff; /* Màu viền của select khi focus */
+		}
+</style>
+
+<script>
+	function submitForm() {
+		var form = document.getElementById("cateForm");
+		form.submit();
+	}
+</script>
+
 <!-- products -->
 <div class="product-section mt-150 mb-150">
 	<div class="container">
 		<div class="row">
 			<div class="col-md-12">
 				<div class="product-filters">
+					<div>
+						<form id="cateForm" asp-action="Index" method="get">
+							<div class="rs-select2--light">
+
+								<select class="js-select2" name="cid" asp-items="@ViewBag.categories" onchange="submitForm()">
+									<option value="0">Tất cả thể loại</option>
+								</select>
+
+								<div class="dropDownSelect2"></div>
+							</div>
+							<div class="rs-select2--light">
+
+								<select class="js-select2" name="aid" asp-items="@ViewBag.authors" onchange="submitForm()">
+									<option value="0">Tác giả</option>
+								</select>
+
+								<div class="dropDownSelect2"></div>
+							</div>
+						</form>
+					</div>
 				</div>
 			</div>
 		</div>
-
+		<div class="table-data__tool">
+			
+		</div>
 		<div class="row product-lists">
 
 			@foreach (var book in Model)
@@ -34,7 +118,12 @@
 		<div class="row">
 			<div class="col-lg-12 text-center">
 				<div class="pagination-wrap">
-				
+					@for (int i = 1; i <= @ViewBag.NumberOfPages; i++)
+					{
+						<div class="page">
+							<a asp-action="Index" asp-route-page="@i" asp-route-cid="@ViewBag.SelectCid" asp-route-aid="@ViewBag.SelectAid" asp-route-search="@ViewBag.searchString" class="@(i == ViewBag.CurrentPage ? "current-page" : "")">@i</a>
+						</div>
+					}
 				</div>
 			</div>
 		</div>

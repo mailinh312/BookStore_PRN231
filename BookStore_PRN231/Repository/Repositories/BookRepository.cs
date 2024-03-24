@@ -64,9 +64,34 @@ namespace Repository.Repositories
                     throw new Exception("List book is empty!");
                 }
                 List<BookDto> bookDTOs = _mapper.Map<List<BookDto>>(books);
-               
-                
+
+
                 return bookDTOs;
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public List<BestSellerProduct> GetTop5BestSeller()
+        {
+            try
+            {
+                List<BestSellerProduct> list = _context.OrderDetails.Include(od => od.Book).GroupBy(od => od.BookId).Select(x => new BestSellerProduct
+                {
+                    Id = x.Key,
+                    SoldQuantity = x.Sum(od => od.Quantity)
+
+                }).OrderByDescending(p => p.SoldQuantity).Take(5).ToList();
+
+                foreach (var bestSellerBook in list)
+                {
+                    Book book = _context.Books.Find(bestSellerBook.Id);
+                    bestSellerBook.Price = book.Price;
+                    bestSellerBook.Title = book.Title;
+                }
+                return list;
             }
             catch (Exception ex)
             {
