@@ -11,7 +11,7 @@
 
     <!-- Title Page-->
     <title>Book Store Manager</title>
- 
+
     <!-- Fontfaces CSS-->
     <link href="~/assets/css/font-face.css" rel="stylesheet" media="all">
     <link href="~/assets/vendor/font-awesome-4.7/css/font-awesome.min.css" rel="stylesheet" media="all">
@@ -119,13 +119,6 @@
                                             <a class="js-acc-btn" asp-page="/Account/Manage/Index">@ViewBag.UserName</a>
                                         </div>
                                         <div class="account-dropdown js-dropdown">
-                                            <div class="account-dropdown__body">
-                                                <div class="account-dropdown__item">
-                                                    <a asp-area="Identity" asp-page="/Account/Manage/Index">
-                                                        <i class="zmdi zmdi-account"></i>Tài khoản
-                                                    </a>
-                                                </div>
-                                            </div>
                                             <div class="account-dropdown__footer">
                                                 <a href="/logout">
                                                     <i class="zmdi zmdi-power"></i>Đăng xuất
@@ -141,10 +134,9 @@
                 </div>
             </header>
             <!--END HEADER DESKTOP-->
-
             <!-- MAIN CONTENT-->
             <div class="main-content">
-                
+
                 @RenderBody()
             </div>
         </div>
