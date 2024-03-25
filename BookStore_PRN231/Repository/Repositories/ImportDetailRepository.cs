@@ -40,6 +40,7 @@ namespace Repository.Repositories
                 Book book = _context.Books.Find(importDetailDto.BookId);
                 book.OriginPrice = importDetailDto.InputPrice;
                 book.Price = importDetailDto.OutputPrice;
+                book.StockQuantity += importDetailDto.Quantity;
                 _context.Books.Update(book);
                 _context.SaveChanges();
 

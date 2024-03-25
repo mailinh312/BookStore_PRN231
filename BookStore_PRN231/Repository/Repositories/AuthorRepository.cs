@@ -46,7 +46,7 @@ namespace Repository.Repositories
                 List<Author> authors = _context.Authors.ToList();
                 if (!authors.Any())
                 {
-                    throw new Exception("List is empty!");
+                    authors = new List<Author>();
                 }
                 var authorDtos = _mapper.Map<List<AuthorDto>>(authors);
                 return authorDtos;
@@ -82,7 +82,7 @@ namespace Repository.Repositories
                 List<Author> authors = _context.Authors.Where(x => x.Active == true).ToList();
                 if (!authors.Any())
                 {
-                    throw new Exception("List is empty!");
+                    authors = new List<Author>();
                 }
                 var authorDtos = _mapper.Map<List<AuthorDto>>(authors);
                 return authorDtos;

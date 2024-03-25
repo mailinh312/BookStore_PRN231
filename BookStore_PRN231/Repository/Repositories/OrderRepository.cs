@@ -87,7 +87,7 @@ namespace Repository.Repositories
                 var orders = _context.Orders.Where(x => x.UserId == userId).Include(x => x.User).Include(x => x.Status).OrderByDescending(x => x.OrderDate).ToList();
                 if (!orders.Any())
                 {
-                    throw new Exception("List is empty!");
+                    orders = new List<Order>();
                 }
 
                 var orderDtos = _mapper.Map<List<OrderDto>>(orders);

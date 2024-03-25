@@ -67,6 +67,10 @@ namespace BookStoreClient.Areas.Admin.Controllers
 			{
 				return Redirect("/forbidden");
 			}
+            if (!ImportDetailList.Any())
+            {
+                return RedirectToAction("AddImportForm");
+            }
 			string username = getUserNameByToken();
             UserDto user = (await userApiService.GetUserByName(username)).FirstOrDefault();
             ImportCreateDto import = new ImportCreateDto();

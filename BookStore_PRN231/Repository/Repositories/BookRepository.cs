@@ -61,7 +61,7 @@ namespace Repository.Repositories
 
                 if (!books.Any())
                 {
-                    throw new Exception("List book is empty!");
+                    books = new List<Book>();
                 }
                 List<BookDto> bookDTOs = _mapper.Map<List<BookDto>>(books);
 
@@ -106,7 +106,7 @@ namespace Repository.Repositories
                 List<Book> books = _context.Books.Where(x => x.AuthorId == id).Include(x => x.Author).Include(x => x.Category).ToList();
                 if (!books.Any())
                 {
-                    throw new Exception("List book is empty!");
+                    books = new List<Book>();
                 }
                 List<BookDto> bookDTOs = _mapper.Map<List<BookDto>>(books);
                 return bookDTOs;
@@ -125,7 +125,7 @@ namespace Repository.Repositories
                 List<Book> books = _context.Books.Where(x => x.CategoryId == id).Include(x => x.Author).Include(x => x.Category).ToList();
                 if (!books.Any())
                 {
-                    throw new Exception("List book is empty!");
+                    books = new List<Book>();
                 }
                 List<BookDto> bookDTOs = _mapper.Map<List<BookDto>>(books);
                 return bookDTOs;
@@ -143,7 +143,7 @@ namespace Repository.Repositories
                 List<Book> books = _context.Books.Where(x => x.Title.ToUpper().Trim().Contains(title.ToUpper().Trim())).Include(x => x.Author).Include(x => x.Category).ToList();
                 if (!books.Any())
                 {
-                    throw new Exception("There is no book found!");
+                    books = new List<Book>();
                 }
                 List<BookDto> bookDTOs = _mapper.Map<List<BookDto>>(books);
                 return bookDTOs;
@@ -161,7 +161,7 @@ namespace Repository.Repositories
                 Book book = _context.Books.Include(x => x.Category).Include(x => x.Author).FirstOrDefault(x => x.BookId == id);
                 if (book == null)
                 {
-                    throw new Exception("There is no book found!");
+                    book = new Book();
                 }
                 BookDto bookDto = _mapper.Map<BookDto>(book);
                 return bookDto;

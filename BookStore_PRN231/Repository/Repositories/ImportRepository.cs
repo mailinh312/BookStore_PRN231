@@ -44,7 +44,7 @@ namespace Repository.Repositories
                 var imports = _context.Imports.Include(x => x.User).OrderByDescending(x => x.ImportDate).ToList();
                 if (!imports.Any())
                 {
-                    throw new Exception("List is empty");
+                    imports = new List<Import>();
                 }
                 var importsDto = _mapper.Map<List<ImportDto>>(imports);
                 return importsDto;

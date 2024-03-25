@@ -58,7 +58,7 @@ namespace BookStoreClient.Controllers
                 return Redirect("/login");
             }
             UserDto user = (await userApiService.GetUserByName(username)).FirstOrDefault();
-            List<OrderDto> list = await orderApiService.GetOrdersByUserId(user.Id);
+            List<OrderDto> list = (await orderApiService.GetOrdersByUserId(user.Id)) ?? new List<OrderDto>();
             ViewBag.UserName = username;
             return View(list);
         }

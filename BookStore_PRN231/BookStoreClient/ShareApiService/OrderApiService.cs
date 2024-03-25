@@ -35,13 +35,16 @@ namespace BookStoreClient.ShareApiService
         {
             HttpResponseMessage response = await client.GetAsync(ApiUrl + "/Order/UserId?id=" + userId);
             string strOrder = await response.Content.ReadAsStringAsync();
-
-
-            var options = new JsonSerializerOptions
+            List<OrderDto> orders = new List<OrderDto>();
+            if (strOrder != null)
             {
-                PropertyNameCaseInsensitive = true,
-            };
-            List<OrderDto> orders = System.Text.Json.JsonSerializer.Deserialize<List<OrderDto>>(strOrder, options);
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true,
+                };
+                orders = JsonConvert.DeserializeObject<List<OrderDto>>(strOrder);
+            }
+            
             return orders;
         }
 

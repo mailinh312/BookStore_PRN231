@@ -110,7 +110,7 @@
 						</div>
 						<h6>@book.Title</h6>
 						<h6 class="product-price"> @book.Price VND</h6>
-						<a asp-action="AddToCart" asp-route-productId="@book.BookId" class="cart-btn"><i class="fas fa-shopping-cart"></i> Thêm vào giỏ hàng</a>
+						<a asp-action="AddToCart" asp-route-productId="@book.BookId" asp-route-page="@ViewBag.CurrentPage" class="cart-btn"><i class="fas fa-shopping-cart"></i> Thêm vào giỏ hàng</a>
 					</div>
 				</div>
 			}
